@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <!--普通-->
+    <color name="general_black">#dd000000</color>
+    <color name="general_white">#ffffffff</color>
+    <!-- 减淡-->
+    <color name="fades_black">#89000000</color>
+    <color name="fades_white">#b2ffffff</color>
+    <!-- 禁用/警告-->
+    <color name="disabled_black">#42000000</color>
+    <color name="disabled_white">#4cffffff</color>
+    <!-- 分割线-->
+    <color name="divide_black">#1e000000</color>
+    <color name="divide_white">#1effffff</color>
+</resources>

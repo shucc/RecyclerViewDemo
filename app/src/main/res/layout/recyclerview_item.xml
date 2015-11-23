@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@drawable/recycler_item_click"
+    android:clickable="true"
+    android:layout_width="match_parent"
+    android:layout_height="100dp">
+
+    <TextView
+        android:id="@+id/recyclerview_text"
+        android:gravity="center"
+        android:text="Fragment2_item"
+        android:textSize="16sp"
+        android:textColor="@color/general_black"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</LinearLayout>
