@@ -10,7 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 /**
- * 分割线
+ * the divider
  * Created by chenchao on 15/11/23.
  */
 public class DividerItemDecoration extends RecyclerView.ItemDecoration {

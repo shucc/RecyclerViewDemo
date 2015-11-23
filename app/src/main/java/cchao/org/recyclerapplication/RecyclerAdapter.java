@@ -1,52 +1,119 @@
 package cchao.org.recyclerapplication;
 
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import java.util.ArrayList;
 
 /**
  * Created by chenchao on 15/11/23.
  */
-public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
-    // 数据集
-    private String[] mDataset;
+public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    public RecyclerAdapter() {
-        super();
+    private final int TYPE_ITEM = 1;
+    private final int TYPE_FOOT = 2;
+
+    //数据集
+    private ArrayList<String> mDataset;
+
+    private int visibleThreshold = 5;
+    private int lastVisibleItem, totalItemCount;
+    private boolean loading;
+    private OnLoadMoreListener mOnLoadMoreListener;
+
+    public RecyclerAdapter(RecyclerView recyclerView) {
+        if (recyclerView.getLayoutManager() instanceof LinearLayoutManager) {
+
+            final LinearLayoutManager linearLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+            recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                @Override
+                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                    super.onScrolled(recyclerView, dx, dy);
+
+                    totalItemCount = linearLayoutManager.getItemCount();
+                    lastVisibleItem = linearLayoutManager.findLastVisibleItemPosition();
+                    if (!loading && totalItemCount <= (lastVisibleItem + visibleThreshold)) {
+                        if (mOnLoadMoreListener != null) {
+                            mOnLoadMoreListener.onLoadMore();
+                        }
+                        loading = true;
+                    }
+                }
+            });
+        }
     }
 
-    public void setData(String[] mDataset) {
+    public void setLoaded() {
+        loading = false;
+    }
+
+    public void setOnLoadMoreListener(OnLoadMoreListener mOnLoadMoreListener ) {
+        this.mOnLoadMoreListener = mOnLoadMoreListener ;
+    }
+
+    public void setData(ArrayList<String> mDataset) {
         this.mDataset = mDataset;
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-        //设置按照item布局文件样式进行布局
-        View rootView = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.recyclerview_item, viewGroup, false);
-        //View view = View.inflate(viewGroup.getContext(), R.layout.fragment2_recyclerview_item, null);
-        // 创建一个ViewHolder
-        ViewHolder holder = new ViewHolder(rootView);
-        return holder;
+    public int getItemViewType(int position) {
+        return mDataset.get(position) != null ? TYPE_ITEM : TYPE_FOOT;
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder viewHolder, int i) {
-        // 绑定数据到ViewHolder上
-        viewHolder.mTextView.setText(mDataset[i]);
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+        View view = null;
+        if (i == TYPE_ITEM) {
+            view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.recyclerview_item, viewGroup, false);
+            NormalViewHolder holder = new NormalViewHolder(view);
+            return holder;
+        } else if (i == TYPE_FOOT) {
+            view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.footer_view_load_more, viewGroup, false);
+            FootViewHolder footViewHolder = new FootViewHolder(view);
+            return  footViewHolder;
+        }
+        return null;
+    }
+
+    @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int i) {
+        if (viewHolder instanceof NormalViewHolder) {
+            ((NormalViewHolder) viewHolder).mTextView.setText(mDataset.get(i));
+        } else if (viewHolder instanceof FootViewHolder){
+            ((FootViewHolder) viewHolder).loadText.setText("Loading...");
+            ((FootViewHolder) viewHolder).progressBar.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
     public int getItemCount() {
-        return mDataset.length;
+        return mDataset.size();
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder{
+    //加载底部ViewHolder
+    private class FootViewHolder extends RecyclerView.ViewHolder {
+
+        public TextView loadText;
+
+        public ProgressBar progressBar;
+
+        public FootViewHolder(View itemView) {
+            super(itemView);
+            loadText = (TextView) itemView.findViewById(R.id.tv_text);
+            progressBar = (ProgressBar) itemView.findViewById(R.id.pb_progressBar);
+        }
+    }
+
+    private class NormalViewHolder extends RecyclerView.ViewHolder{
 
         public TextView mTextView;
 
-        public ViewHolder(View itemView) {
+        public NormalViewHolder(View itemView) {
             super(itemView);
             mTextView = (TextView) itemView.findViewById(R.id.recyclerview_text);
         }
