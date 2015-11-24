@@ -1,9 +1,13 @@
-package cchao.org.recyclerapplication;
+package cchao.org.recyclerapplication.ui.activity;
 
+/**
+ * Created by chenchao on 15/11/24.
+ */
+
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -11,6 +15,12 @@ import android.view.View;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+
+import cchao.org.recyclerapplication.R;
+import cchao.org.recyclerapplication.adapter.RecyclerAdapter;
+import cchao.org.recyclerapplication.decoration.DividerItemDecoration;
+import cchao.org.recyclerapplication.listener.OnLoadMoreListener;
+import cchao.org.recyclerapplication.listener.RecyclerItemClickListener;
 
 public class MainActivity extends AppCompatActivity implements Handler.Callback{
 
@@ -63,22 +73,22 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback{
             }
         }));
         mAdapter.setOnLoadMoreListener(new OnLoadMoreListener() {
-         @Override
-         public void onLoadMore() {
-             dataset.add(null);
-             mAdapter.notifyItemInserted(dataset.size() - 1);
-             new Thread(new Runnable() {
-                 @Override
-                 public void run() {
-                     try {
-                         Thread.sleep(3000);
-                     } catch (InterruptedException e) {
-                         e.printStackTrace();
-                     }
-                     mHandler.sendEmptyMessage(1);
-                 }
-             }).start();
-         }
+            @Override
+            public void onLoadMore() {
+                dataset.add(null);
+                mAdapter.notifyItemInserted(dataset.size() - 1);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Thread.sleep(3000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        mHandler.sendEmptyMessage(1);
+                    }
+                }).start();
+            }
         });
     }
 

@@ -1,4 +1,4 @@
-package cchao.org.recyclerapplication;
+package cchao.org.recyclerapplication.adapter;
 
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -10,8 +10,11 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import cchao.org.recyclerapplication.R;
+import cchao.org.recyclerapplication.listener.OnLoadMoreListener;
+
 /**
- * Created by chenchao on 15/11/23.
+ * Created by chenchao on 15/11/24.
  */
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 

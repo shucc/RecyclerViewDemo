@@ -1,4 +1,4 @@
-package cchao.org.recyclerapplication;
+package cchao.org.recyclerapplication.listener;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -7,7 +7,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 /**
- * Created by chenchao on 15/11/23.
+ * Created by chenchao on 15/11/24.
  */
 public class RecyclerItemClickListener implements RecyclerView.OnItemTouchListener
 {

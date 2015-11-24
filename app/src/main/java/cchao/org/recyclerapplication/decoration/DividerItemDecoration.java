@@ -1,4 +1,4 @@
-package cchao.org.recyclerapplication;
+package cchao.org.recyclerapplication.decoration;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -10,8 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 /**
- * the divider
- * Created by chenchao on 15/11/23.
+ * Created by chenchao on 15/11/24.
  */
 public class DividerItemDecoration extends RecyclerView.ItemDecoration {
 
