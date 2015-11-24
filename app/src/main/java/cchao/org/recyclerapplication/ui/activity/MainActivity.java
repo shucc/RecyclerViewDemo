@@ -7,6 +7,7 @@ package cchao.org.recyclerapplication.ui.activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -22,7 +23,7 @@ import cchao.org.recyclerapplication.decoration.DividerItemDecoration;
 import cchao.org.recyclerapplication.listener.OnLoadMoreListener;
 import cchao.org.recyclerapplication.listener.RecyclerItemClickListener;
 
-public class MainActivity extends AppCompatActivity implements Handler.Callback{
+public class MainActivity extends AppCompatActivity implements Handler.Callback, SwipeRefreshLayout.OnRefreshListener{
 
     private RecyclerView mRecyclerView;
 
@@ -34,11 +35,19 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback{
 
     private Handler mHandler;
 
+    private SwipeRefreshLayout mSwipeRefreshLayout;
+
+    //添加底部item的id
+    private int footItemNum;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
+        mSwipeRefreshLayout.setOnRefreshListener(this);
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.swiperefresh_one);
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerview);
         mHandler = new Handler(this);
         initRecycler();
@@ -73,15 +82,23 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback{
             }
         }));
         mAdapter.setOnLoadMoreListener(new OnLoadMoreListener() {
+            //上拉自动加载
             @Override
             public void onLoadMore() {
                 dataset.add(null);
                 mAdapter.notifyItemInserted(dataset.size() - 1);
+                footItemNum = dataset.size() - 1;
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
                         try {
                             Thread.sleep(3000);
+                            int start = dataset.size();
+                            int end = start + 10;
+
+                            for (int i = start + 1; i <= end; i++) {
+                                dataset.add("Text" + String.valueOf(i - 2));
+                            }
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -92,19 +109,42 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback{
         });
     }
 
+    //下拉刷新
+    @Override
+    public void onRefresh() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(3000);
+                    dataset.clear();
+                    for (int i = 0; i < 50; i++){
+                        dataset.add(i, "ChangeText" + i);
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                mHandler.sendEmptyMessage(2);
+            }
+        }).start();
+    }
+
+    @Override
     public boolean handleMessage(Message msg) {
         if (msg.what == 1) {
-            dataset.remove(dataset.size() - 1);
-            mAdapter.notifyItemRemoved(dataset.size());
-            int start = dataset.size();
-            int end = start + 10;
+            dataset.remove(footItemNum);
+            mAdapter.notifyItemRemoved(footItemNum + 1);
 
-            for (int i = start + 1; i <= end; i++) {
-                dataset.add("Text" + String.valueOf(i - 1));
-                mAdapter.notifyItemInserted(dataset.size());
-            }
+            mAdapter.notifyDataSetChanged();
             mAdapter.setLoaded();
+        } else if (msg.what == 2) {
+            mAdapter.notifyDataSetChanged();
+            mSwipeRefreshLayout.setRefreshing(false);
         }
         return false;
+    }
+
+    protected void onDestroy() {
+        super.onDestroy();
     }
 }
