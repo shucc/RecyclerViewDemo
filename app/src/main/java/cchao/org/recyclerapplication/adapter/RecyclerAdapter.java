@@ -2,7 +2,6 @@ package cchao.org.recyclerapplication.adapter;
 
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +23,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     //数据集
     private ArrayList<String> mDataset;
+    //底部itemNum
+    private int footItemNum = 0;
 
     private int visibleThreshold = 1;
     private int lastVisibleItem, totalItemCount;
@@ -32,7 +33,6 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     public RecyclerAdapter(RecyclerView recyclerView) {
         if (recyclerView.getLayoutManager() instanceof LinearLayoutManager) {
-
             final LinearLayoutManager linearLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
             recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
                 @Override
@@ -42,6 +42,9 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     lastVisibleItem = linearLayoutManager.findLastVisibleItemPosition();
                     if (!loading && totalItemCount <= (lastVisibleItem + visibleThreshold)) {
                         if (mOnLoadMoreListener != null) {
+                            mDataset.add(null);
+                            notifyItemInserted(mDataset.size() - 1);
+                            footItemNum = mDataset.size() - 1;
                             mOnLoadMoreListener.onLoadMore();
                         }
                         loading = true;
@@ -52,6 +55,9 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     public void setLoaded() {
+        mDataset.remove(footItemNum);
+        notifyItemRemoved(footItemNum + 1);
+        notifyDataSetChanged();
         loading = false;
     }
 

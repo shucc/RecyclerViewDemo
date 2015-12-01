@@ -37,9 +37,6 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback,
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
-    //添加底部item的id
-    private int footItemNum;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,9 +82,6 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback,
             //上拉自动加载
             @Override
             public void onLoadMore() {
-                dataset.add(null);
-                mAdapter.notifyItemInserted(dataset.size() - 1);
-                footItemNum = dataset.size() - 1;
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -132,18 +126,18 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback,
     @Override
     public boolean handleMessage(Message msg) {
         if (msg.what == 1) {
-            dataset.remove(footItemNum);
-            mAdapter.notifyItemRemoved(footItemNum + 1);
-
-            mAdapter.notifyDataSetChanged();
             mAdapter.setLoaded();
         } else if (msg.what == 2) {
             mAdapter.notifyDataSetChanged();
             mSwipeRefreshLayout.setRefreshing(false);
+        } else if (msg.what == 3) {
+            mAdapter.setLoaded();
+            Toast.makeText(MainActivity.this, "所有数据已加载完!", Toast.LENGTH_SHORT).show();
         }
         return false;
     }
 
+    @Override
     protected void onDestroy() {
         super.onDestroy();
     }
