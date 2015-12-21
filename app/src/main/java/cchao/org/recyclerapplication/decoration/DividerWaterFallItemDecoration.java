@@ -1,10 +1,12 @@
 package cchao.org.recyclerapplication.decoration;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
@@ -13,10 +15,17 @@ import android.view.View;
  */
 public class DividerWaterFallItemDecoration extends RecyclerView.ItemDecoration{
 
+    private static final int[] ATTRS = new int[]{android.R.attr.listDivider};
+    private Drawable mDivider;
+
     private Paint paintBorder, mPaint;
     private int offset;
 
-    public DividerWaterFallItemDecoration(Context c){
+    public DividerWaterFallItemDecoration(Context context){
+
+        final TypedArray a = context.obtainStyledAttributes(ATTRS);
+        mDivider = a.getDrawable(0);
+        a.recycle();
         offset = 10;
 
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);

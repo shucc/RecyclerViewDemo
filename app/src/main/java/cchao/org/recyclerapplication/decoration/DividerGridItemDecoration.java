@@ -6,11 +6,14 @@ import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.LayoutManager;
 import android.support.v7.widget.RecyclerView.State;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 
 /**
  * Created by chenchao on 15/12/18.
@@ -19,19 +22,23 @@ public class DividerGridItemDecoration extends RecyclerView.ItemDecoration {
 
     private static final int[] ATTRS = new int[] { android.R.attr.listDivider };
     private Drawable mDivider;
+    private int mScreenWidth;
+    private int mLeftHeight, mRightHeight;
 
     public DividerGridItemDecoration(Context context) {
         final TypedArray a = context.obtainStyledAttributes(ATTRS);
         mDivider = a.getDrawable(0);
         a.recycle();
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        mScreenWidth = wm.getDefaultDisplay().getWidth();
+        mLeftHeight = 0;
+        mRightHeight = 0;
     }
 
     @Override
     public void onDraw(Canvas c, RecyclerView parent, State state) {
-
         drawHorizontal(c, parent);
         drawVertical(c, parent);
-
     }
 
     private int getSpanCount(RecyclerView parent) {
@@ -48,6 +55,24 @@ public class DividerGridItemDecoration extends RecyclerView.ItemDecoration {
         return spanCount;
     }
 
+    private int getScrollDirection(RecyclerView parent) {
+        LayoutManager layoutManager = parent.getLayoutManager();
+        if (layoutManager instanceof GridLayoutManager) {
+            if (((LinearLayoutManager) layoutManager).getOrientation() == LinearLayoutManager.VERTICAL) {
+                return 1;
+            } else {
+                return 2;
+            }
+        } else if (layoutManager instanceof StaggeredGridLayoutManager) {
+            if (((StaggeredGridLayoutManager) layoutManager).getOrientation() == StaggeredGridLayoutManager.VERTICAL) {
+                return 1;
+            } else {
+                return 2;
+            }
+        }
+        throw new RuntimeException("what the fuck!");
+    }
+
     public void drawHorizontal(Canvas c, RecyclerView parent) {
         int childCount = parent.getChildCount();
         for (int i = 0; i < childCount; i++) {
@@ -56,7 +81,7 @@ public class DividerGridItemDecoration extends RecyclerView.ItemDecoration {
                     .getLayoutParams();
             final int left = child.getLeft() - params.leftMargin;
             final int right = child.getRight() + params.rightMargin
-                    + mDivider.getIntrinsicWidth();
+                    + mDivider.getIntrinsicHeight();
             final int top = child.getBottom() + params.bottomMargin;
             final int bottom = top + mDivider.getIntrinsicHeight();
             mDivider.setBounds(left, top, right, bottom);
@@ -74,7 +99,7 @@ public class DividerGridItemDecoration extends RecyclerView.ItemDecoration {
             final int top = child.getTop() - params.topMargin;
             final int bottom = child.getBottom() + params.bottomMargin;
             final int left = child.getRight() + params.rightMargin;
-            final int right = left + mDivider.getIntrinsicWidth();
+            final int right = left + mDivider.getIntrinsicHeight();
 
             mDivider.setBounds(left, top, right, bottom);
             mDivider.draw(c);
@@ -133,17 +158,22 @@ public class DividerGridItemDecoration extends RecyclerView.ItemDecoration {
     }
 
     @Override
-    public void getItemOffsets(Rect outRect, int itemPosition,
-                               RecyclerView parent) {
+    public void getItemOffsets(Rect outRect, View view, RecyclerView parent, State state) {
         int spanCount = getSpanCount(parent);
         int childCount = parent.getAdapter().getItemCount();
+        int itemPosition = parent.getChildAdapterPosition(view);
+        int spanIndex = ((StaggeredGridLayoutManager.LayoutParams) view.getLayoutParams()).getSpanIndex();
         if (isLastRaw(parent, itemPosition, spanCount, childCount)) {    // 如果是最后一行，则不需要绘制底部
-            outRect.set(0, 0, mDivider.getIntrinsicWidth(), 0);
-        } else if (isLastColum(parent, itemPosition, spanCount, childCount)) {   // 如果是最后一列，则不需要绘制右边
-            outRect.set(0, 0, 0, mDivider.getIntrinsicHeight());
-        } else {
-            outRect.set(0, 0, mDivider.getIntrinsicWidth(),
+            outRect.set(0, 0, mDivider.getIntrinsicHeight(), 0);
+        }
+        //TODO 黑科技啊，右边全部绘制,在item的layout中不设置距右边距
+//        else if (spanIndex == spanCount - 1) {   // 如果是最后一列，则不需要绘制右边
+//            outRect.set(0, 0, 0, mDivider.getIntrinsicHeight());
+//        }
+        else {
+            outRect.set(0, 0, mDivider.getIntrinsicHeight(),
                     mDivider.getIntrinsicHeight());
+            mLeftHeight += view.getHeight();
         }
     }
 }

@@ -12,7 +12,9 @@
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recyclerview"
-            android:padding="@dimen/recyclerview_padding"
+            android:paddingLeft="@dimen/recyclerview_padding"
+            android:paddingTop="@dimen/recyclerview_padding"
+            android:paddingBottom="@dimen/recyclerview_padding"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 

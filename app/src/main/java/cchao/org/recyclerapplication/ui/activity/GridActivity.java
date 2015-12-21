@@ -5,10 +5,8 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-
 import cchao.org.recyclerapplication.adapter.RecyclerAdapter;
-import cchao.org.recyclerapplication.decoration.DividerWaterFallItemDecoration;
+import cchao.org.recyclerapplication.decoration.DividerGridItemDecoration;
 import cchao.org.recyclerapplication.listener.OnItemClickListener;
 import cchao.org.recyclerapplication.listener.OnLoadMoreListener;
 
@@ -22,7 +20,7 @@ public class GridActivity extends BaseActivity {
         mAdapter = new RecyclerAdapter(mRecyclerView, dataset, RecyclerAdapter.GRID_RECYCLER);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        mRecyclerView.addItemDecoration(new DividerWaterFallItemDecoration(this));
+        mRecyclerView.addItemDecoration(new DividerGridItemDecoration(this));
         mAdapter.setmOnItemClickListener(new OnItemClickListener() {
             @Override
             public void OnItemClick(View view, int position) {
