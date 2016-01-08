@@ -22,17 +22,12 @@ public class DividerGridItemDecoration extends RecyclerView.ItemDecoration {
 
     private static final int[] ATTRS = new int[] { android.R.attr.listDivider };
     private Drawable mDivider;
-    private int mScreenWidth;
-    private int mLeftHeight, mRightHeight;
 
     public DividerGridItemDecoration(Context context) {
         final TypedArray a = context.obtainStyledAttributes(ATTRS);
         mDivider = a.getDrawable(0);
         a.recycle();
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        mScreenWidth = wm.getDefaultDisplay().getWidth();
-        mLeftHeight = 0;
-        mRightHeight = 0;
     }
 
     @Override
@@ -173,7 +168,6 @@ public class DividerGridItemDecoration extends RecyclerView.ItemDecoration {
         else {
             outRect.set(0, 0, mDivider.getIntrinsicHeight(),
                     mDivider.getIntrinsicHeight());
-            mLeftHeight += view.getHeight();
         }
     }
 }
