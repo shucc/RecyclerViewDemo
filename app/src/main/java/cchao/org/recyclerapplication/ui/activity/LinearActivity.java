@@ -4,6 +4,7 @@ package cchao.org.recyclerapplication.ui.activity;
  * Created by chenchao on 15/11/24.
  */
 
+import android.os.Handler;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
@@ -40,23 +41,19 @@ public class LinearActivity extends BaseActivity {
             //上拉自动加载
             @Override
             public void onLoadMore() {
-                new Thread(new Runnable() {
+                new Handler().postDelayed(new Runnable() {
+
                     @Override
                     public void run() {
-                        try {
-                            Thread.sleep(3000);
-                            int start = dataset.size();
-                            int end = start + 10;
+                        int start = dataset.size();
+                        int end = start + 10;
 
-                            for (int i = start + 1; i <= end; i++) {
-                                dataset.add("Text" + String.valueOf(i - 2));
-                            }
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
+                        for (int i = start + 1; i <= end; i++) {
+                            dataset.add("Text" + String.valueOf(i - 2));
                         }
                         mHandler.sendEmptyMessage(1);
                     }
-                }).start();
+                }, 3000);
             }
         });
     }
@@ -64,20 +61,16 @@ public class LinearActivity extends BaseActivity {
     //下拉刷新
     @Override
     public void onRefresh() {
-        new Thread(new Runnable() {
+        new Handler().postDelayed(new Runnable() {
+
             @Override
             public void run() {
-                try {
-                    Thread.sleep(3000);
-                    dataset.clear();
-                    for (int i = 0; i < 50; i++){
-                        dataset.add(i, "ChangeText" + i);
-                    }
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                dataset.clear();
+                for (int i = 0; i < 50; i++){
+                    dataset.add(i, "ChangeText" + i);
                 }
                 mHandler.sendEmptyMessage(2);
             }
-        }).start();
+        }, 3000);
     }
 }
