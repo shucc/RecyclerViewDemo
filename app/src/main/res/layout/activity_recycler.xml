@@ -1,25 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:cube_ptr="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="cchao.org.recyclerapplication.MainActivity">
+    android:layout_height="match_parent" >
 
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/swipeRefreshLayout"
+    <cchao.org.recyclerapplication.widget.MyPtrClassicFrameLayout
+        android:id="@+id/ptrclassicframe"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="8dp"
+
+        cube_ptr:ptr_resistance="1.2"
+        cube_ptr:ptr_ratio_of_header_height_to_refresh="1.0"
+        cube_ptr:ptr_duration_to_close="300"
+        cube_ptr:ptr_duration_to_close_header="500"
+        cube_ptr:ptr_keep_header_when_refresh="true"
+        cube_ptr:ptr_pull_to_fresh="false" >
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recyclerview"
-            android:paddingLeft="@dimen/recyclerview_padding"
-            android:paddingTop="@dimen/recyclerview_padding"
-            android:paddingBottom="@dimen/recyclerview_padding"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
         </android.support.v7.widget.RecyclerView>
 
-    </android.support.v4.widget.SwipeRefreshLayout>
+    </cchao.org.recyclerapplication.widget.MyPtrClassicFrameLayout>
 
 </RelativeLayout>

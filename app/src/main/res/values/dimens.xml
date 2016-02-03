@@ -5,8 +5,7 @@
 
     <dimen name="recyclerview_padding">8dp</dimen>
     <dimen name="recyclerview_item_height">100dp</dimen>
-
-    <dimen name="progressBar_size">30dp</dimen>
+    <dimen name="progressBar_size">20dp</dimen>
 
     <dimen name="text_size">16sp</dimen>
 </resources>

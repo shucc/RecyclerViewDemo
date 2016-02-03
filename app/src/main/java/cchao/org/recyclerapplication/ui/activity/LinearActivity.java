@@ -4,72 +4,145 @@ package cchao.org.recyclerapplication.ui.activity;
  * Created by chenchao on 15/11/24.
  */
 
+import android.app.Activity;
+import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Toast;
 
-import cchao.org.recyclerapplication.adapter.RecyclerAdapter;
+import java.util.ArrayList;
+import java.util.List;
+
+import cchao.org.recyclerapplication.R;
 import cchao.org.recyclerapplication.decoration.DividerItemDecoration;
 import cchao.org.recyclerapplication.listener.OnItemClickListener;
 import cchao.org.recyclerapplication.listener.OnLoadMoreListener;
+import cchao.org.recyclerapplication.ui.adapter.LinearAdapter;
+import cchao.org.recyclerapplication.widget.MyPtrClassicFrameLayout;
+import in.srain.cube.views.ptr.PtrDefaultHandler;
+import in.srain.cube.views.ptr.PtrFrameLayout;
+import in.srain.cube.views.ptr.PtrHandler;
 
-public class LinearActivity extends BaseActivity {
+public class LinearActivity extends Activity implements Handler.Callback {
 
-    public void initRecycler() {
-        LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(this);
-        mLinearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        mRecyclerView.setLayoutManager(mLinearLayoutManager);
+    private int mPage = 1;
 
-        mAdapter = new RecyclerAdapter(mRecyclerView, dataset, RecyclerAdapter.LINEAR_RECYCLER);
-        mRecyclerView.setAdapter(mAdapter);
-        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(LinearActivity.this, DividerItemDecoration.VERTICAL_LIST));
-        mAdapter.setmOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void OnItemClick(View view, int position) {
-                Toast.makeText(LinearActivity.this, "[线性布局]点击了" + position, Toast.LENGTH_SHORT).show();
-            }
+    private MyPtrClassicFrameLayout mPtrClassicFrame;
 
-            @Override
-            public void onItemLongClick(View view, int position) {
-                Toast.makeText(LinearActivity.this, "[线性布局]长按了" + position, Toast.LENGTH_SHORT).show();
-            }
-        });
-        mAdapter.setOnLoadMoreListener(new OnLoadMoreListener() {
-            //上拉自动加载
-            @Override
-            public void onLoadMore() {
-                new Handler().postDelayed(new Runnable() {
+    private RecyclerView mRecyclerView;
+    private LinearLayoutManager mLinearManager;
+    private LinearAdapter mAdapter;
 
-                    @Override
-                    public void run() {
-                        int start = dataset.size();
-                        int end = start + 10;
+    private List<String> mData;
 
-                        for (int i = start + 1; i <= end; i++) {
-                            dataset.add("Text" + String.valueOf(i - 2));
+    private Handler mHandler;
+
+    @Override
+    public boolean handleMessage(Message msg) {
+        switch (msg.what) {
+            case 1:
+                if (mAdapter == null) {
+
+                    mLinearManager = new LinearLayoutManager(LinearActivity.this);
+                    mLinearManager.setOrientation(LinearLayoutManager.VERTICAL);
+                    mRecyclerView.setLayoutManager(mLinearManager);
+
+                    mAdapter = new LinearAdapter(mData, mRecyclerView);
+                    mRecyclerView.setAdapter(mAdapter);
+                    mRecyclerView.addItemDecoration(new DividerItemDecoration(LinearActivity.this, DividerItemDecoration.VERTICAL_LIST));
+                    mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+
+                    mAdapter.setOnItemClickListener(new OnItemClickListener() {
+                        @Override
+                        public void OnItemClick(View view, int position) {
+                            Toast.makeText(LinearActivity.this, "点击了" + position, Toast.LENGTH_SHORT).show();
                         }
-                        mHandler.sendEmptyMessage(1);
-                    }
-                }, 3000);
-            }
-        });
+
+                        @Override
+                        public void onItemLongClick(View view, int position) {
+                            Toast.makeText(LinearActivity.this, " 长按了" + position, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+                    mAdapter.setOnLoadMoreListener(new OnLoadMoreListener() {
+                        @Override
+                        public void onLoadMore() {
+                            getData();
+                        }
+                    });
+
+                }
+                mAdapter.reset();
+                if (mPtrClassicFrame.isShown()) {
+                    mPtrClassicFrame.refreshComplete();
+                }
+                mPage++;
+                break;
+            default:
+                break;
+        }
+        return false;
     }
 
-    //下拉刷新
     @Override
-    public void onRefresh() {
-        new Handler().postDelayed(new Runnable() {
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_recycler);
+
+        bindView();
+        initData();
+        bindEvent();
+    }
+
+    private void bindView() {
+        mRecyclerView = (RecyclerView) findViewById(R.id.recyclerview);
+        mPtrClassicFrame = (MyPtrClassicFrameLayout) findViewById(R.id.ptrclassicframe);
+    }
+
+    private void initData() {
+        mHandler = new Handler(this);
+        mData = new ArrayList<String>();
+    }
+
+    private void bindEvent() {
+        mPtrClassicFrame.setPtrHandler(new PtrHandler() {
+            @Override
+            public boolean checkCanDoRefresh(PtrFrameLayout frame, View content, View header) {
+                return PtrDefaultHandler.checkContentCanBePulledDown(frame, content, header);
+            }
 
             @Override
+            public void onRefreshBegin(PtrFrameLayout frame) {
+                mPage = 1;
+                getData();
+            }
+        });
+        mPtrClassicFrame.setLastUpdateTimeRelateObject(this);
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus) {
+            mPtrClassicFrame.autoRefresh();
+        }
+    }
+
+    private void getData() {
+        if (mPage == 1) {
+            mData.clear();
+        }
+        new Handler().postDelayed(new Runnable() {
+            @Override
             public void run() {
-                dataset.clear();
-                for (int i = 0; i < 50; i++){
-                    dataset.add(i, "ChangeText" + i);
+                for (int i = 0; i < 20; i++) {
+                    mData.add("Text" + i);
                 }
-                mHandler.sendEmptyMessage(2);
+                mHandler.sendEmptyMessage(1);
             }
         }, 3000);
     }

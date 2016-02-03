@@ -1,79 +1,143 @@
 package cchao.org.recyclerapplication.ui.activity;
 
+import android.app.Activity;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
 import android.widget.Toast;
 
-import cchao.org.recyclerapplication.adapter.RecyclerAdapter;
-import cchao.org.recyclerapplication.decoration.DividerGridItemDecoration;
+import java.util.ArrayList;
+import java.util.List;
+
+import cchao.org.recyclerapplication.R;
+import cchao.org.recyclerapplication.decoration.DividerWaterFallItemDecoration;
 import cchao.org.recyclerapplication.listener.OnItemClickListener;
 import cchao.org.recyclerapplication.listener.OnLoadMoreListener;
+import cchao.org.recyclerapplication.ui.adapter.GridAdapter;
+import cchao.org.recyclerapplication.widget.MyPtrClassicFrameLayout;
+import in.srain.cube.views.ptr.PtrDefaultHandler;
+import in.srain.cube.views.ptr.PtrFrameLayout;
+import in.srain.cube.views.ptr.PtrHandler;
 
-public class GridActivity extends BaseActivity {
+public class GridActivity extends Activity implements Handler.Callback {
+
+    private int mPage = 1;
+
+    private MyPtrClassicFrameLayout mPtrClassicFrame;
+
+    private RecyclerView mRecyclerView;
+    private StaggeredGridLayoutManager mStaggerManager;
+    private GridAdapter mAdapter;
+
+    private List<String> mData;
+
+    private Handler mHandler;
 
     @Override
-    protected void initRecycler() {
-        StaggeredGridLayoutManager mLinearLayoutManager = new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL);
-        mRecyclerView.setLayoutManager(mLinearLayoutManager);
+    public boolean handleMessage(Message msg) {
+        switch (msg.what) {
+            case 1:
+                if (mAdapter == null) {
+                    mStaggerManager = new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL);
+                    mRecyclerView.setLayoutManager(mStaggerManager);
 
-        mAdapter = new RecyclerAdapter(mRecyclerView, dataset, RecyclerAdapter.GRID_RECYCLER);
-        mRecyclerView.setAdapter(mAdapter);
-        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        mRecyclerView.addItemDecoration(new DividerGridItemDecoration(this));
-        mAdapter.setmOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void OnItemClick(View view, int position) {
-                Toast.makeText(GridActivity.this, "［Grid布局］点击了" + position, Toast.LENGTH_SHORT).show();
-            }
+                    mAdapter = new GridAdapter(mData, mRecyclerView);
+                    mRecyclerView.setAdapter(mAdapter);
+                    mRecyclerView.addItemDecoration(new DividerWaterFallItemDecoration(GridActivity.this));
+                    mRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
-            @Override
-            public void onItemLongClick(View view, int position) {
-                Toast.makeText(GridActivity.this, "[Grid布局］长按了" + position, Toast.LENGTH_SHORT).show();
-            }
-        });
-        mAdapter.setOnLoadMoreListener(new OnLoadMoreListener() {
-            //上拉自动加载
-            @Override
-            public void onLoadMore() {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            Thread.sleep(3000);
-                            int start = dataset.size();
-                            int end = start + 10;
-
-                            for (int i = start + 1; i <= end; i++) {
-                                dataset.add("Text" + String.valueOf(i - 2));
-                            }
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
+                    mAdapter.setOnItemClickListener(new OnItemClickListener() {
+                        @Override
+                        public void OnItemClick(View view, int position) {
+                            Toast.makeText(GridActivity.this, "点击了" + position, Toast.LENGTH_SHORT).show();
                         }
-                        mHandler.sendEmptyMessage(1);
-                    }
-                }).start();
-            }
-        });
+
+                        @Override
+                        public void onItemLongClick(View view, int position) {
+                            Toast.makeText(GridActivity.this, " 长按了" + position, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+                    mAdapter.setOnLoadMoreListener(new OnLoadMoreListener() {
+                        @Override
+                        public void onLoadMore() {
+                            getData();
+                        }
+                    });
+
+                }
+                mAdapter.reset();
+                if (mPtrClassicFrame.isShown()) {
+                    mPtrClassicFrame.refreshComplete();
+                }
+                mPage++;
+                break;
+            default:
+                break;
+        }
+        return false;
     }
 
-    //下拉刷新
     @Override
-    public void onRefresh() {
-        new Thread(new Runnable() {
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_recycler);
+
+        bindView();
+        initData();
+        bindEvent();
+    }
+
+    private void bindView() {
+        mRecyclerView = (RecyclerView) findViewById(R.id.recyclerview);
+        mPtrClassicFrame = (MyPtrClassicFrameLayout) findViewById(R.id.ptrclassicframe);
+    }
+
+    private void initData() {
+        mHandler = new Handler(this);
+        mData = new ArrayList<String>();
+    }
+
+    private void bindEvent() {
+        mPtrClassicFrame.setPtrHandler(new PtrHandler() {
+            @Override
+            public boolean checkCanDoRefresh(PtrFrameLayout frame, View content, View header) {
+                return PtrDefaultHandler.checkContentCanBePulledDown(frame, content, header);
+            }
+
+            @Override
+            public void onRefreshBegin(PtrFrameLayout frame) {
+                mPage = 1;
+                getData();
+            }
+        });
+        mPtrClassicFrame.setLastUpdateTimeRelateObject(this);
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus) {
+            mPtrClassicFrame.autoRefresh();
+        }
+    }
+
+    private void getData() {
+        if (mPage == 1) {
+            mData.clear();
+        }
+        new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                try {
-                    Thread.sleep(3000);
-                    dataset.clear();
-                    for (int i = 0; i < 50; i++){
-                        dataset.add(i, "ChangeText" + i);
-                    }
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                for (int i = 0; i < 20; i++) {
+                    mData.add("Text" + i);
                 }
-                mHandler.sendEmptyMessage(2);
+                mHandler.sendEmptyMessage(1);
             }
-        }).start();
+        }, 3000);
     }
 }
