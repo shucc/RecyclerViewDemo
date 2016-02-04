@@ -45,7 +45,12 @@ public class WaterFallActivity extends Activity implements Handler.Callback {
                     mStaggerManager = new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL);
                     mRecyclerView.setLayoutManager(mStaggerManager);
 
-                    mAdapter = new WaterFallAdapter(mData, mRecyclerView);
+                    mAdapter = new WaterFallAdapter(mData, mRecyclerView, new OnLoadMoreListener() {
+                        @Override
+                        public void onLoadMore() {
+                            getData();
+                        }
+                    });
                     mRecyclerView.setAdapter(mAdapter);
                     mRecyclerView.addItemDecoration(new DividerWaterFallItemDecoration(WaterFallActivity.this));
                     mRecyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -61,14 +66,6 @@ public class WaterFallActivity extends Activity implements Handler.Callback {
                             Toast.makeText(WaterFallActivity.this, " 长按了" + position, Toast.LENGTH_SHORT).show();
                         }
                     });
-
-                    mAdapter.setOnLoadMoreListener(new OnLoadMoreListener() {
-                        @Override
-                        public void onLoadMore() {
-                            getData();
-                        }
-                    });
-
                 }
                 mAdapter.reset();
                 if (mPtrClassicFrame.isShown()) {

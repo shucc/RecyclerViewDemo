@@ -9,7 +9,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import cchao.org.recyclerapplication.R;
-import cchao.org.recyclerapplication.listener.OnItemClickListener;
+import cchao.org.recyclerapplication.listener.OnLoadMoreListener;
 
 /**
  * Created by chenchao on 16/2/3.
@@ -17,8 +17,8 @@ import cchao.org.recyclerapplication.listener.OnItemClickListener;
 public class GridAdapter extends LoadMoreAdapter<String> {
 
 
-    public GridAdapter(List<String> data, RecyclerView recyclerView) {
-        super(data, recyclerView);
+    public GridAdapter(List<String> data, RecyclerView recyclerView, OnLoadMoreListener onLoadMoreListener) {
+        super(data, recyclerView, onLoadMoreListener);
     }
 
     @Override

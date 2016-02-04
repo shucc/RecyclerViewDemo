@@ -3,7 +3,6 @@ package cchao.org.recyclerapplication.ui.adapter;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,9 +39,10 @@ public class LoadMoreAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
     //最后一个可见的item的位置
     private int lastVisibleItemPosition;
 
-    public LoadMoreAdapter(List<T> data, RecyclerView recyclerView) {
+    public LoadMoreAdapter(List<T> data, RecyclerView recyclerView, OnLoadMoreListener onloadMoreListener) {
         this.mData = data;
         this.mRecyclerView = recyclerView;
+        this.onLoadMoreListener = onloadMoreListener;
         RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
         if (layoutManager instanceof LinearLayoutManager) {
             final LinearLayoutManager linearLayoutManager = (LinearLayoutManager) layoutManager;
@@ -90,10 +90,6 @@ public class LoadMoreAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
         this.onItemClickListener = onItemClickListener;
-    }
-
-    public void setOnLoadMoreListener(OnLoadMoreListener onLoadMoreListener) {
-        this.onLoadMoreListener = onLoadMoreListener;
     }
 
     public void reset() {

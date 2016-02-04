@@ -9,15 +9,15 @@ import android.widget.TextView;
 import java.util.List;
 
 import cchao.org.recyclerapplication.R;
-import cchao.org.recyclerapplication.listener.OnItemClickListener;
+import cchao.org.recyclerapplication.listener.OnLoadMoreListener;
 
 /**
  * Created by chenchao on 16/2/3.
  */
 public class LinearAdapter extends LoadMoreAdapter<String> {
 
-    public LinearAdapter(List<String> data, RecyclerView recyclerView) {
-        super(data, recyclerView);
+    public LinearAdapter(List<String> data, RecyclerView recyclerView, OnLoadMoreListener onLoadMoreListener) {
+        super(data, recyclerView, onLoadMoreListener);
     }
 
     @Override

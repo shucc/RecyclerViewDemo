@@ -45,7 +45,12 @@ public class GridActivity extends Activity implements Handler.Callback {
                     mStaggerManager = new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL);
                     mRecyclerView.setLayoutManager(mStaggerManager);
 
-                    mAdapter = new GridAdapter(mData, mRecyclerView);
+                    mAdapter = new GridAdapter(mData, mRecyclerView, new OnLoadMoreListener() {
+                        @Override
+                        public void onLoadMore() {
+                            getData();
+                        }
+                    });
                     mRecyclerView.setAdapter(mAdapter);
                     mRecyclerView.addItemDecoration(new DividerWaterFallItemDecoration(GridActivity.this));
                     mRecyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -61,14 +66,6 @@ public class GridActivity extends Activity implements Handler.Callback {
                             Toast.makeText(GridActivity.this, " 长按了" + position, Toast.LENGTH_SHORT).show();
                         }
                     });
-
-                    mAdapter.setOnLoadMoreListener(new OnLoadMoreListener() {
-                        @Override
-                        public void onLoadMore() {
-                            getData();
-                        }
-                    });
-
                 }
                 mAdapter.reset();
                 if (mPtrClassicFrame.isShown()) {

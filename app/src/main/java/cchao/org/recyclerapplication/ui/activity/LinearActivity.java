@@ -51,7 +51,12 @@ public class LinearActivity extends Activity implements Handler.Callback {
                     mLinearManager.setOrientation(LinearLayoutManager.VERTICAL);
                     mRecyclerView.setLayoutManager(mLinearManager);
 
-                    mAdapter = new LinearAdapter(mData, mRecyclerView);
+                    mAdapter = new LinearAdapter(mData, mRecyclerView, new OnLoadMoreListener() {
+                        @Override
+                        public void onLoadMore() {
+                            getData();
+                        }
+                    });
                     mRecyclerView.setAdapter(mAdapter);
                     mRecyclerView.addItemDecoration(new DividerItemDecoration(LinearActivity.this, DividerItemDecoration.VERTICAL_LIST));
                     mRecyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -67,14 +72,6 @@ public class LinearActivity extends Activity implements Handler.Callback {
                             Toast.makeText(LinearActivity.this, " 长按了" + position, Toast.LENGTH_SHORT).show();
                         }
                     });
-
-                    mAdapter.setOnLoadMoreListener(new OnLoadMoreListener() {
-                        @Override
-                        public void onLoadMore() {
-                            getData();
-                        }
-                    });
-
                 }
                 mAdapter.reset();
                 if (mPtrClassicFrame.isShown()) {

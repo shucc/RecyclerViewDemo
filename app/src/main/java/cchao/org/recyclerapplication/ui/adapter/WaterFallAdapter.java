@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cchao.org.recyclerapplication.R;
+import cchao.org.recyclerapplication.listener.OnLoadMoreListener;
 
 /**
  * Created by chenchao on 16/2/3.
@@ -19,8 +20,8 @@ public class WaterFallAdapter extends LoadMoreAdapter<String> {
     //瀑布流的高度
     private List<Integer> mHeight;
 
-    public WaterFallAdapter(List<String> data, RecyclerView recyclerView) {
-        super(data, recyclerView);
+    public WaterFallAdapter(List<String> data, RecyclerView recyclerView, OnLoadMoreListener onLoadMoreListener) {
+        super(data, recyclerView, onLoadMoreListener);
         //随机高度的初始化
         mHeight = new ArrayList<Integer>();
         for (int i = 0; i < mData.size(); i++) {
