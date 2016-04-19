@@ -17,24 +17,30 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        this.findViewById(R.id.activity_main_linear).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.activity_main_linear).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(MainActivity.this, LinearActivity.class));
             }
         });
 
-        this.findViewById(R.id.activity_main_grid).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.activity_main_grid).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(MainActivity.this, GridActivity.class));
             }
         });
 
-        this.findViewById(R.id.activity_main_waterfall).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.activity_main_waterfall).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(MainActivity.this, WaterFallActivity.class));
+            }
+        });
+        findViewById(R.id.activity_main_coordinator).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, CoordinatorActivity.class));
             }
         });
     }

@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
@@ -30,7 +31,7 @@ public class GridActivity extends Activity implements Handler.Callback {
     private MyPtrClassicFrameLayout mPtrClassicFrame;
 
     private RecyclerView mRecyclerView;
-    private StaggeredGridLayoutManager mStaggerManager;
+    private GridLayoutManager mGridManager;
     private GridAdapter mAdapter;
 
     private List<String> mData;
@@ -42,8 +43,9 @@ public class GridActivity extends Activity implements Handler.Callback {
         switch (msg.what) {
             case 1:
                 if (mAdapter == null) {
-                    mStaggerManager = new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL);
-                    mRecyclerView.setLayoutManager(mStaggerManager);
+                    mGridManager = new GridLayoutManager(this, 2);
+                    mGridManager.setOrientation(GridLayoutManager.VERTICAL);
+                    mRecyclerView.setLayoutManager(mGridManager);
 
                     mAdapter = new GridAdapter(mData, mRecyclerView, new OnLoadMoreListener() {
                         @Override
@@ -57,8 +59,9 @@ public class GridActivity extends Activity implements Handler.Callback {
 
                     mAdapter.setOnItemClickListener(new OnItemClickListener() {
                         @Override
-                        public void OnItemClick(View view, int position) {
+                        public void onItemClick(View view, int position) {
                             Toast.makeText(GridActivity.this, "点击了" + position, Toast.LENGTH_SHORT).show();
+
                         }
 
                         @Override

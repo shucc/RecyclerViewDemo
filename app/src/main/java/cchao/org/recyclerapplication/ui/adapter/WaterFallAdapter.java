@@ -53,7 +53,7 @@ public class WaterFallAdapter extends LoadMoreAdapter<String> {
                     @Override
                     public void onClick(View v) {
                         int pos = holder.getLayoutPosition();
-                        onItemClickListener.OnItemClick(v, pos);
+                        onItemClickListener.onItemClick(v, pos);
                     }
                 });
                 ((NormalViewHolder)holder).itemView.setOnLongClickListener(new View.OnLongClickListener() {

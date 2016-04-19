@@ -17,7 +17,9 @@
         </activity>
         <activity android:name=".ui.activity.GridActivity" />
         <activity android:name=".ui.activity.WaterFallActivity" />
-        <activity android:name=".ui.activity.LinearActivity"/>
+        <activity android:name=".ui.activity.LinearActivity" />
+        <activity android:name=".ui.activity.CoordinatorActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

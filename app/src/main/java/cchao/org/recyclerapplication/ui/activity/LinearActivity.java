@@ -63,8 +63,9 @@ public class LinearActivity extends Activity implements Handler.Callback {
 
                     mAdapter.setOnItemClickListener(new OnItemClickListener() {
                         @Override
-                        public void OnItemClick(View view, int position) {
+                        public void onItemClick(View view, int position) {
                             Toast.makeText(LinearActivity.this, "点击了" + position, Toast.LENGTH_SHORT).show();
+
                         }
 
                         @Override
