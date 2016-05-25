@@ -75,6 +75,10 @@ public class LinearActivity extends Activity implements Handler.Callback {
                     });
                 }
                 mAdapter.reset();
+                //模拟全部加载完成
+//                if (mPage == 3) {
+//                    mAdapter.setLoadAll(true);
+//                }
                 if (mPtrClassicFrame.isShown()) {
                     mPtrClassicFrame.refreshComplete();
                 }
@@ -142,6 +146,6 @@ public class LinearActivity extends Activity implements Handler.Callback {
                 }
                 mHandler.sendEmptyMessage(1);
             }
-        }, 3000);
+        }, 1000);
     }
 }

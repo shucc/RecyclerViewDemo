@@ -14,10 +14,20 @@ import cchao.org.recyclerapplication.listener.OnLoadMoreListener;
 /**
  * Created by chenchao on 16/2/3.
  */
-public class LinearAdapter extends LoadMoreAdapter<String> {
+public class LinearAdapter extends LoadMoreAdapter {
+
+    private List<String> mData;
 
     public LinearAdapter(List<String> data, RecyclerView recyclerView, OnLoadMoreListener onLoadMoreListener) {
-        super(data, recyclerView, onLoadMoreListener);
+        super(recyclerView, onLoadMoreListener);
+        this.mData = data;
+    }
+
+    @Override
+    int getDataSize() {
+        if (mData == null)
+            return 0;
+        return mData.size();
     }
 
     @Override

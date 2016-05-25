@@ -17,20 +17,16 @@ import cchao.org.recyclerapplication.listener.OnLoadMoreListener;
 /**
  * Created by chenchao on 16/2/3.
  */
-public class LoadMoreAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public abstract class LoadMoreAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     protected static final int LOAD_MORE_ITEM = -1;
 
     private RecyclerView mRecyclerView;
 
-    protected List<T> mData;
-
     private OnLoadMoreListener onLoadMoreListener;
     protected OnItemClickListener onItemClickListener;
 
     private boolean loading = true;
-
-    private int footItemNum = -1;
 
     private int visibleThreshold = 1;
     private int lastVisibleItem, totalItemCount;
@@ -40,8 +36,7 @@ public class LoadMoreAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
     //最后一个可见的item的位置
     private int lastVisibleItemPosition;
 
-    public LoadMoreAdapter(List<T> data, RecyclerView recyclerView, OnLoadMoreListener onloadMoreListener) {
-        this.mData = data;
+    public LoadMoreAdapter(RecyclerView recyclerView, OnLoadMoreListener onloadMoreListener) {
         this.mRecyclerView = recyclerView;
         this.onLoadMoreListener = onloadMoreListener;
         RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
@@ -54,13 +49,11 @@ public class LoadMoreAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
                     totalItemCount = linearLayoutManager.getItemCount();
                     lastVisibleItem = linearLayoutManager.findLastVisibleItemPosition();
                     if (!loading && totalItemCount <= (lastVisibleItem + visibleThreshold) && dy > 0) {
+                        loading = true;
+                        notifyItemInserted(getItemCount() - 1);
                         if (onLoadMoreListener != null) {
-                            mData.add(null);
-                            notifyItemInserted(mData.size() - 1);
-                            footItemNum = mData.size() - 1;
                             onLoadMoreListener.onLoadMore();
                         }
-                        loading = true;
                     }
                 }
             });
@@ -76,13 +69,11 @@ public class LoadMoreAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
                     staggeredGridLayoutManager.findLastVisibleItemPositions(lastPositions);
                     lastVisibleItemPosition = findMax(lastPositions);
                     if (!loading && staggeredGridLayoutManager.getItemCount() <= lastVisibleItemPosition + 1 && dy > 0) {
+                        loading = true;
+                        notifyItemInserted(getItemCount() - 1);
                         if (onLoadMoreListener != null) {
-                            mData.add(null);
-                            notifyItemInserted(mData.size() - 1);
-                            footItemNum = mData.size() - 1;
                             onLoadMoreListener.onLoadMore();
                         }
-                        loading = true;
                     }
                 }
             });
@@ -94,25 +85,26 @@ public class LoadMoreAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
     public void reset() {
-        if (footItemNum != -1 && footItemNum < mData.size()) {
-            mData.remove(footItemNum);
-            notifyItemRemoved(footItemNum);
-        }
         loading = false;
+        notifyItemRemoved(getItemCount() - 1);
     }
 
     @Override
-    public int getItemViewType(int position) {
-        if (mData.get(position) == null) {
+    public final int getItemViewType(int position) {
+        if (position >= getDataSize()) {
             return LOAD_MORE_ITEM;
         }
         return super.getItemViewType(position);
     }
 
     @Override
-    public int getItemCount() {
-        return mData.size();
+    public final int getItemCount() {
+        if (loading)
+           return getDataSize() + 1;
+        return getDataSize();
     }
+
+    abstract int getDataSize();
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {

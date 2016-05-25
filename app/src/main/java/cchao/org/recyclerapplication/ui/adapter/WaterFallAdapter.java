@@ -15,18 +15,27 @@ import cchao.org.recyclerapplication.listener.OnLoadMoreListener;
 /**
  * Created by chenchao on 16/2/3.
  */
-public class WaterFallAdapter extends LoadMoreAdapter<String> {
+public class WaterFallAdapter extends LoadMoreAdapter {
 
     //瀑布流的高度
     private List<Integer> mHeight;
+    private List<String> mData;
 
     public WaterFallAdapter(List<String> data, RecyclerView recyclerView, OnLoadMoreListener onLoadMoreListener) {
-        super(data, recyclerView, onLoadMoreListener);
+        super(recyclerView, onLoadMoreListener);
+        this.mData = data;
         //随机高度的初始化
         mHeight = new ArrayList<Integer>();
         for (int i = 0; i < mData.size(); i++) {
             mHeight.add((int)(300 + Math.random() * 300));
         }
+    }
+
+    @Override
+    int getDataSize() {
+        if (mData == null)
+            return 0;
+        return mData.size();
     }
 
     @Override
