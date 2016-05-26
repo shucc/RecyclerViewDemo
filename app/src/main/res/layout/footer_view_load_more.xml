@@ -1,23 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_gravity="center_horizontal"
-    android:gravity="center"
-    android:orientation="horizontal"
+    android:layout_height="48dp"
     android:paddingBottom="@dimen/recyclerview_padding"
     android:paddingTop="@dimen/recyclerview_padding">
 
-    <ProgressBar
-        android:id="@+id/pb_progressBar"
-        android:layout_width="@dimen/progressBar_size"
-        android:layout_height="@dimen/progressBar_size" />
+    <LinearLayout
+        android:id="@+id/footer_view_load_now"
+        android:layout_centerInParent="true"
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent">
+
+        <ProgressBar
+            android:id="@+id/pb_progressBar"
+            android:layout_gravity="center_vertical"
+            android:layout_width="@dimen/progressBar_size"
+            android:layout_height="@dimen/progressBar_size" />
+
+        <TextView
+            android:id="@+id/tv_text"
+            android:layout_gravity="center_vertical"
+            android:layout_toRightOf="@+id/pb_progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/recyclerview_padding"
+            android:text="加载中..." />
+
+    </LinearLayout>
 
     <TextView
-        android:id="@+id/tv_text"
+        android:id="@+id/footer_view_load_all"
+        android:visibility="gone"
+        android:layout_centerInParent="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/recyclerview_padding"
-        android:text="加载中..." />
+        android:text="数据已经全部加载完成"/>
 
-</LinearLayout>
+</RelativeLayout>

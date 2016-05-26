@@ -74,11 +74,12 @@ public class LinearActivity extends Activity implements Handler.Callback {
                         }
                     });
                 }
-                mAdapter.reset();
                 //模拟全部加载完成
-//                if (mPage == 3) {
-//                    mAdapter.setLoadAll(true);
-//                }
+                if (mPage == 3) {
+                    mAdapter.setLoadAll(true);
+                } else {
+                    mAdapter.reset();
+                }
                 if (mPtrClassicFrame.isShown()) {
                     mPtrClassicFrame.refreshComplete();
                 }
@@ -137,11 +138,18 @@ public class LinearActivity extends Activity implements Handler.Callback {
     private void getData() {
         if (mPage == 1) {
             mData.clear();
+            if (mAdapter != null) {
+                mAdapter.setLoadAll(false);
+            }
         }
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                for (int i = 0; i < 20; i++) {
+                int size = 0;
+                if (mData != null) {
+                    size = mData.size();
+                }
+                for (int i = size; i < size + 20; i++) {
                     mData.add("Text" + i);
                 }
                 mHandler.sendEmptyMessage(1);

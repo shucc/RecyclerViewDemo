@@ -4,9 +4,12 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import java.util.List;
 
@@ -36,6 +39,14 @@ public abstract class LoadMoreAdapter extends RecyclerView.Adapter<RecyclerView.
     //最后一个可见的item的位置
     private int lastVisibleItemPosition;
 
+    //正在加载中item position
+    private int loadMorePos = -1;
+
+    //是否全部加载完成
+    private boolean isLoadAll = false;
+
+    private FootViewHolder footViewHolder;
+
     public LoadMoreAdapter(RecyclerView recyclerView, OnLoadMoreListener onloadMoreListener) {
         this.mRecyclerView = recyclerView;
         this.onLoadMoreListener = onloadMoreListener;
@@ -48,8 +59,9 @@ public abstract class LoadMoreAdapter extends RecyclerView.Adapter<RecyclerView.
                     super.onScrolled(recyclerView, dx, dy);
                     totalItemCount = linearLayoutManager.getItemCount();
                     lastVisibleItem = linearLayoutManager.findLastVisibleItemPosition();
-                    if (!loading && totalItemCount <= (lastVisibleItem + visibleThreshold) && dy > 0) {
+                    if (!loading && totalItemCount <= (lastVisibleItem + visibleThreshold) && dy > 0 && !isLoadAll) {
                         loading = true;
+                        loadMorePos = getItemCount() - 1;
                         notifyItemInserted(getItemCount() - 1);
                         if (onLoadMoreListener != null) {
                             onLoadMoreListener.onLoadMore();
@@ -68,8 +80,9 @@ public abstract class LoadMoreAdapter extends RecyclerView.Adapter<RecyclerView.
                     }
                     staggeredGridLayoutManager.findLastVisibleItemPositions(lastPositions);
                     lastVisibleItemPosition = findMax(lastPositions);
-                    if (!loading && staggeredGridLayoutManager.getItemCount() <= lastVisibleItemPosition + 1 && dy > 0) {
+                    if (!loading && staggeredGridLayoutManager.getItemCount() <= lastVisibleItemPosition + 1 && dy > 0 && !isLoadAll) {
                         loading = true;
+                        loadMorePos = getItemCount() - 1;
                         notifyItemInserted(getItemCount() - 1);
                         if (onLoadMoreListener != null) {
                             onLoadMoreListener.onLoadMore();
@@ -84,13 +97,24 @@ public abstract class LoadMoreAdapter extends RecyclerView.Adapter<RecyclerView.
         this.onItemClickListener = onItemClickListener;
     }
 
-    public void reset() {
+    public final void reset() {
         loading = false;
-        notifyItemRemoved(getItemCount() - 1);
+        notifyItemRemoved(loadMorePos);
+    }
+
+    public final void setLoadAll(boolean loadAll) {
+        isLoadAll = loadAll;
+        if (isLoadAll && footViewHolder != null) {
+            footViewHolder.mLLLoadNow.setVisibility(View.GONE);
+            footViewHolder.mTxtLoadMore.setVisibility(View.VISIBLE);
+        } else if (footViewHolder != null) {
+            footViewHolder.mLLLoadNow.setVisibility(View.VISIBLE);
+            footViewHolder.mTxtLoadMore.setVisibility(View.GONE);
+        }
     }
 
     @Override
-    public final int getItemViewType(int position) {
+    public int getItemViewType(int position) {
         if (position >= getDataSize()) {
             return LOAD_MORE_ITEM;
         }
@@ -109,7 +133,8 @@ public abstract class LoadMoreAdapter extends RecyclerView.Adapter<RecyclerView.
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.footer_view_load_more, parent, false);
-        return new FootViewHolder(view);
+        footViewHolder = new FootViewHolder(view);
+        return footViewHolder;
     }
 
     @Override
@@ -146,8 +171,15 @@ public abstract class LoadMoreAdapter extends RecyclerView.Adapter<RecyclerView.
     }
 
     protected class FootViewHolder extends RecyclerView.ViewHolder {
+
+        private LinearLayout mLLLoadNow;
+        private TextView mTxtLoadMore;
+
         public FootViewHolder(View itemView) {
             super(itemView);
+
+            mLLLoadNow = (LinearLayout) itemView.findViewById(R.id.footer_view_load_now);
+            mTxtLoadMore = (TextView) itemView.findViewById(R.id.footer_view_load_all);
         }
     }
 
