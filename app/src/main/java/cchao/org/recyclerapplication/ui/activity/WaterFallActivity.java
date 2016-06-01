@@ -60,11 +60,6 @@ public class WaterFallActivity extends Activity implements Handler.Callback {
                         public void onItemClick(View view, int position) {
                             Toast.makeText(WaterFallActivity.this, "点击了" + position, Toast.LENGTH_SHORT).show();
                         }
-
-                        @Override
-                        public void onItemLongClick(View view, int position) {
-                            Toast.makeText(WaterFallActivity.this, " 长按了" + position, Toast.LENGTH_SHORT).show();
-                        }
                     });
                 }
                 mAdapter.reset();
@@ -128,6 +123,9 @@ public class WaterFallActivity extends Activity implements Handler.Callback {
             mData.clear();
             if (!mData.isEmpty()) {
                 mAdapter.clearHeight();
+            }
+            if (mAdapter != null) {
+                mAdapter.setLoadAll(false);
             }
         }
         new Handler().postDelayed(new Runnable() {

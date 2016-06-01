@@ -67,11 +67,6 @@ public class LinearActivity extends Activity implements Handler.Callback {
                             Toast.makeText(LinearActivity.this, "点击了" + position, Toast.LENGTH_SHORT).show();
 
                         }
-
-                        @Override
-                        public void onItemLongClick(View view, int position) {
-                            Toast.makeText(LinearActivity.this, " 长按了" + position, Toast.LENGTH_SHORT).show();
-                        }
                     });
                 }
                 //模拟全部加载完成
@@ -121,6 +116,9 @@ public class LinearActivity extends Activity implements Handler.Callback {
             @Override
             public void onRefreshBegin(PtrFrameLayout frame) {
                 mPage = 1;
+                if (mAdapter != null) {
+                    mAdapter.setLoadAll(false);
+                }
                 getData();
             }
         });
@@ -138,9 +136,6 @@ public class LinearActivity extends Activity implements Handler.Callback {
     private void getData() {
         if (mPage == 1) {
             mData.clear();
-            if (mAdapter != null) {
-                mAdapter.setLoadAll(false);
-            }
         }
         new Handler().postDelayed(new Runnable() {
             @Override

@@ -63,11 +63,6 @@ public class GridActivity extends Activity implements Handler.Callback {
                             Toast.makeText(GridActivity.this, "点击了" + position, Toast.LENGTH_SHORT).show();
 
                         }
-
-                        @Override
-                        public void onItemLongClick(View view, int position) {
-                            Toast.makeText(GridActivity.this, " 长按了" + position, Toast.LENGTH_SHORT).show();
-                        }
                     });
                 }
                 mAdapter.reset();
@@ -129,6 +124,9 @@ public class GridActivity extends Activity implements Handler.Callback {
     private void getData() {
         if (mPage == 1) {
             mData.clear();
+            if (mAdapter != null) {
+                mAdapter.setLoadAll(false);
+            }
         }
         new Handler().postDelayed(new Runnable() {
             @Override

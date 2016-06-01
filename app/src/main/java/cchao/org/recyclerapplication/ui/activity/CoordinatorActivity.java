@@ -68,11 +68,6 @@ public class CoordinatorActivity extends AppCompatActivity implements Handler.Ca
                             Toast.makeText(CoordinatorActivity.this, "点击了" + position, Toast.LENGTH_SHORT).show();
 
                         }
-
-                        @Override
-                        public void onItemLongClick(View view, int position) {
-                            Toast.makeText(CoordinatorActivity.this, " 长按了" + position, Toast.LENGTH_SHORT).show();
-                        }
                     });
                 }
                 mAdapter.reset();
@@ -156,6 +151,9 @@ public class CoordinatorActivity extends AppCompatActivity implements Handler.Ca
     private void getData() {
         if (mPage == 1) {
             mData.clear();
+            if (mAdapter != null) {
+                mAdapter.setLoadAll(false);
+            }
         }
         new Handler().postDelayed(new Runnable() {
             @Override

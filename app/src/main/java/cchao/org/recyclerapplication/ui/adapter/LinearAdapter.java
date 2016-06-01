@@ -52,14 +52,6 @@ public class LinearAdapter extends LoadMoreAdapter {
                         onItemClickListener.onItemClick(v, pos);
                     }
                 });
-                ((NormalViewHolder)holder).itemView.setOnLongClickListener(new View.OnLongClickListener() {
-                    @Override
-                    public boolean onLongClick(View v) {
-                        int pos = holder.getLayoutPosition();
-                        onItemClickListener.onItemLongClick(v, pos);
-                        return false;
-                    }
-                });
             }
         }
     }

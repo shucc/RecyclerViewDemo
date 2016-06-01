@@ -99,7 +99,9 @@ public abstract class LoadMoreAdapter extends RecyclerView.Adapter<RecyclerView.
 
     public final void reset() {
         loading = false;
-        notifyItemRemoved(loadMorePos);
+        if (loadMorePos != -1) {
+            notifyItemRemoved(loadMorePos);
+        }
     }
 
     public final void setLoadAll(boolean loadAll) {
@@ -110,6 +112,9 @@ public abstract class LoadMoreAdapter extends RecyclerView.Adapter<RecyclerView.
         } else if (footViewHolder != null) {
             footViewHolder.mLLLoadNow.setVisibility(View.VISIBLE);
             footViewHolder.mTxtLoadMore.setVisibility(View.GONE);
+        }
+        if (!isLoadAll) {
+            loadMorePos = -1;
         }
     }
 
