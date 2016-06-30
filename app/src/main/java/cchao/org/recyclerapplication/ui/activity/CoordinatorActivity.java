@@ -70,7 +70,12 @@ public class CoordinatorActivity extends AppCompatActivity implements Handler.Ca
                         }
                     });
                 }
-                mAdapter.reset();
+                //模拟全部加载完成
+                if (mPage == 3) {
+                    mAdapter.setLoadAll(true);
+                } else {
+                    mAdapter.reset();
+                }
                 if (mPtrClassicFrame.isShown()) {
                     mPtrClassicFrame.refreshComplete();
                 }
@@ -134,6 +139,9 @@ public class CoordinatorActivity extends AppCompatActivity implements Handler.Ca
             @Override
             public void onRefreshBegin(PtrFrameLayout frame) {
                 mPage = 1;
+                if (mAdapter != null) {
+                    mAdapter.setLoadAll(false);
+                }
                 getData();
             }
         });
@@ -151,9 +159,6 @@ public class CoordinatorActivity extends AppCompatActivity implements Handler.Ca
     private void getData() {
         if (mPage == 1) {
             mData.clear();
-            if (mAdapter != null) {
-                mAdapter.setLoadAll(false);
-            }
         }
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -163,6 +168,6 @@ public class CoordinatorActivity extends AppCompatActivity implements Handler.Ca
                 }
                 mHandler.sendEmptyMessage(1);
             }
-        }, 3000);
+        }, 1000);
     }
 }

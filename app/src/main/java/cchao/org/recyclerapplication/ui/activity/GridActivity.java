@@ -65,7 +65,12 @@ public class GridActivity extends Activity implements Handler.Callback {
                         }
                     });
                 }
-                mAdapter.reset();
+                //模拟全部加载完成
+                if (mPage == 3) {
+                    mAdapter.setLoadAll(true);
+                } else {
+                    mAdapter.reset();
+                }
                 if (mPtrClassicFrame.isShown()) {
                     mPtrClassicFrame.refreshComplete();
                 }
@@ -107,6 +112,9 @@ public class GridActivity extends Activity implements Handler.Callback {
             @Override
             public void onRefreshBegin(PtrFrameLayout frame) {
                 mPage = 1;
+                if (mAdapter != null) {
+                    mAdapter.setLoadAll(false);
+                }
                 getData();
             }
         });
@@ -124,9 +132,6 @@ public class GridActivity extends Activity implements Handler.Callback {
     private void getData() {
         if (mPage == 1) {
             mData.clear();
-            if (mAdapter != null) {
-                mAdapter.setLoadAll(false);
-            }
         }
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -136,6 +141,6 @@ public class GridActivity extends Activity implements Handler.Callback {
                 }
                 mHandler.sendEmptyMessage(1);
             }
-        }, 3000);
+        }, 1000);
     }
 }
