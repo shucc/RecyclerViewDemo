@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cchao.org.recyclerapplication.R;
-import cchao.org.recyclerapplication.decoration.DividerItemDecoration;
 import cchao.org.recyclerapplication.listener.OnItemClickListener;
 import cchao.org.recyclerapplication.listener.OnLoadMoreListener;
 import cchao.org.recyclerapplication.ui.adapter.LinearAdapter;
@@ -27,7 +26,7 @@ import in.srain.cube.views.ptr.PtrDefaultHandler;
 import in.srain.cube.views.ptr.PtrFrameLayout;
 import in.srain.cube.views.ptr.PtrHandler;
 
-public class LinearActivity extends Activity implements Handler.Callback {
+public class LinearActivity extends Activity {
 
     private int mPage = 1;
 
@@ -38,53 +37,6 @@ public class LinearActivity extends Activity implements Handler.Callback {
     private LinearAdapter mAdapter;
 
     private List<String> mData;
-
-    private Handler mHandler;
-
-    @Override
-    public boolean handleMessage(Message msg) {
-        switch (msg.what) {
-            case 1:
-                if (mAdapter == null) {
-
-                    mLinearManager = new LinearLayoutManager(LinearActivity.this);
-                    mLinearManager.setOrientation(LinearLayoutManager.VERTICAL);
-                    mRecyclerView.setLayoutManager(mLinearManager);
-
-                    mAdapter = new LinearAdapter(mData, mRecyclerView, new OnLoadMoreListener() {
-                        @Override
-                        public void onLoadMore() {
-                            getData();
-                        }
-                    });
-                    mRecyclerView.setAdapter(mAdapter);
-                    mRecyclerView.addItemDecoration(new DividerItemDecoration(LinearActivity.this, DividerItemDecoration.VERTICAL_LIST));
-                    mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-
-                    mAdapter.setOnItemClickListener(new OnItemClickListener() {
-                        @Override
-                        public void onItemClick(View view, int position) {
-                            Toast.makeText(LinearActivity.this, "点击了" + position, Toast.LENGTH_SHORT).show();
-
-                        }
-                    });
-                }
-                //模拟全部加载完成
-                if (mPage == 3) {
-                    mAdapter.setLoadAll(true);
-                } else {
-                    mAdapter.reset();
-                }
-                if (mPtrClassicFrame.isShown()) {
-                    mPtrClassicFrame.refreshComplete();
-                }
-                mPage++;
-                break;
-            default:
-                break;
-        }
-        return false;
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,8 +54,8 @@ public class LinearActivity extends Activity implements Handler.Callback {
     }
 
     private void initData() {
-        mHandler = new Handler(this);
         mData = new ArrayList<String>();
+        showData();
     }
 
     private void bindEvent() {
@@ -140,15 +92,50 @@ public class LinearActivity extends Activity implements Handler.Callback {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                int size = 0;
-                if (mData != null) {
-                    size = mData.size();
+                if (mPage == 5 && mAdapter != null) {
+                    mAdapter.setLoadAll(true);
+                } else {
+                    int size = 0;
+                    if (mData != null) {
+                        size = mData.size();
+                    }
+                    for (int i = size; i < size + 20; i++) {
+                        mData.add("Text" + i);
+                    }
+                    showData();
                 }
-                for (int i = size; i < size + 20; i++) {
-                    mData.add("Text" + i);
-                }
-                mHandler.sendEmptyMessage(1);
             }
         }, 1000);
+    }
+
+    private void showData() {
+        if (mAdapter == null) {
+
+            mLinearManager = new LinearLayoutManager(LinearActivity.this);
+            mLinearManager.setOrientation(LinearLayoutManager.VERTICAL);
+            mRecyclerView.setLayoutManager(mLinearManager);
+
+            mAdapter = new LinearAdapter(mData, new OnLoadMoreListener() {
+                @Override
+                public void onLoadMore() {
+                    mPage++;
+                    getData();
+                }
+            });
+            mRecyclerView.setAdapter(mAdapter);
+            mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+
+            mAdapter.setOnItemClickListener(new OnItemClickListener() {
+                @Override
+                public void onItemClick(View view, int position) {
+                    Toast.makeText(LinearActivity.this, "点击了" + position, Toast.LENGTH_SHORT).show();
+
+                }
+            });
+        }
+        mAdapter.reset();
+        if (mPtrClassicFrame.isShown()) {
+            mPtrClassicFrame.refreshComplete();
+        }
     }
 }

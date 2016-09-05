@@ -18,8 +18,8 @@ public class LinearAdapter extends LoadMoreAdapter {
 
     private List<String> mData;
 
-    public LinearAdapter(List<String> data, RecyclerView recyclerView, OnLoadMoreListener onLoadMoreListener) {
-        super(recyclerView, onLoadMoreListener);
+    public LinearAdapter(List<String> data, OnLoadMoreListener onLoadMoreListener) {
+        super(onLoadMoreListener);
         this.mData = data;
     }
 
@@ -42,6 +42,7 @@ public class LinearAdapter extends LoadMoreAdapter {
 
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
+        super.onBindViewHolder(holder, position);
         if (holder instanceof NormalViewHolder) {
             ((NormalViewHolder)holder).mTextView.setText(mData.get(position));
             if (onItemClickListener != null) {

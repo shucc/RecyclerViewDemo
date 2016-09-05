@@ -23,7 +23,7 @@ import in.srain.cube.views.ptr.PtrDefaultHandler;
 import in.srain.cube.views.ptr.PtrFrameLayout;
 import in.srain.cube.views.ptr.PtrHandler;
 
-public class WaterFallActivity extends Activity implements Handler.Callback {
+public class WaterFallActivity extends Activity {
 
     private int mPage = 1;
 
@@ -34,45 +34,6 @@ public class WaterFallActivity extends Activity implements Handler.Callback {
     private WaterFallAdapter mAdapter;
 
     private List<String> mData;
-
-    private Handler mHandler;
-
-    @Override
-    public boolean handleMessage(Message msg) {
-        switch (msg.what) {
-            case 1:
-                if (mAdapter == null) {
-                    mStaggerManager = new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL);
-                    mRecyclerView.setLayoutManager(mStaggerManager);
-
-                    mAdapter = new WaterFallAdapter(mData, mRecyclerView, new OnLoadMoreListener() {
-                        @Override
-                        public void onLoadMore() {
-                            getData();
-                        }
-                    });
-                    mRecyclerView.setAdapter(mAdapter);
-                    mRecyclerView.addItemDecoration(new DividerWaterFallItemDecoration(WaterFallActivity.this));
-                    mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-
-                    mAdapter.setOnItemClickListener(new OnItemClickListener() {
-                        @Override
-                        public void onItemClick(View view, int position) {
-                            Toast.makeText(WaterFallActivity.this, "点击了" + position, Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                }
-                mAdapter.reset();
-                if (mPtrClassicFrame.isShown()) {
-                    mPtrClassicFrame.refreshComplete();
-                }
-                mPage++;
-                break;
-            default:
-                break;
-        }
-        return false;
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,8 +51,8 @@ public class WaterFallActivity extends Activity implements Handler.Callback {
     }
 
     private void initData() {
-        mHandler = new Handler(this);
         mData = new ArrayList<String>();
+        showData();
     }
 
     private void bindEvent() {
@@ -131,15 +92,46 @@ public class WaterFallActivity extends Activity implements Handler.Callback {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                for (int i = 0; i < 20; i++) {
+                int size = 0;
+                if (mData != null) {
+                    size = mData.size();
+                }
+                for (int i = size; i < size + 20; i++) {
                     mData.add("Text" + i);
                     if (mAdapter != null) {
                         mAdapter.addHeight();
                     }
                 }
-                mHandler.sendEmptyMessage(1);
+                showData();
             }
         }, 3000);
     }
 
+    private void showData() {
+        if (mAdapter == null) {
+            mStaggerManager = new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL);
+            mRecyclerView.setLayoutManager(mStaggerManager);
+
+            mAdapter = new WaterFallAdapter(mData, new OnLoadMoreListener() {
+                @Override
+                public void onLoadMore() {
+                    mPage++;
+                    getData();
+                }
+            });
+            mRecyclerView.setAdapter(mAdapter);
+            mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+
+            mAdapter.setOnItemClickListener(new OnItemClickListener() {
+                @Override
+                public void onItemClick(View view, int position) {
+                    Toast.makeText(WaterFallActivity.this, "点击了" + position, Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+        mAdapter.reset();
+        if (mPtrClassicFrame.isShown()) {
+            mPtrClassicFrame.refreshComplete();
+        }
+    }
 }

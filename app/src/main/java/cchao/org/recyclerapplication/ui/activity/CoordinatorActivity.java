@@ -27,7 +27,7 @@ import in.srain.cube.views.ptr.PtrDefaultHandler;
 import in.srain.cube.views.ptr.PtrFrameLayout;
 import in.srain.cube.views.ptr.PtrHandler;
 
-public class CoordinatorActivity extends AppCompatActivity implements Handler.Callback {
+public class CoordinatorActivity extends AppCompatActivity {
     private int mPage = 1;
 
     private MyPtrClassicFrameLayout mPtrClassicFrame;
@@ -38,54 +38,8 @@ public class CoordinatorActivity extends AppCompatActivity implements Handler.Ca
 
     private List<String> mData;
 
-    private Handler mHandler;
-
     private AppBarLayout mAppBar;
     private int mOffNum;
-
-    @Override
-    public boolean handleMessage(Message msg) {
-        switch (msg.what) {
-            case 1:
-                if (mAdapter == null) {
-                    mGridManager = new GridLayoutManager(this, 3);
-                    mGridManager.setOrientation(GridLayoutManager.VERTICAL);
-                    mRecyclerView.setLayoutManager(mGridManager);
-
-                    mAdapter = new GridAdapter(mData, mRecyclerView, new OnLoadMoreListener() {
-                        @Override
-                        public void onLoadMore() {
-                            getData();
-                        }
-                    });
-                    mRecyclerView.setAdapter(mAdapter);
-                    mRecyclerView.addItemDecoration(new DividerWaterFallItemDecoration(CoordinatorActivity.this));
-                    mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-
-                    mAdapter.setOnItemClickListener(new OnItemClickListener() {
-                        @Override
-                        public void onItemClick(View view, int position) {
-                            Toast.makeText(CoordinatorActivity.this, "点击了" + position, Toast.LENGTH_SHORT).show();
-
-                        }
-                    });
-                }
-                //模拟全部加载完成
-                if (mPage == 3) {
-                    mAdapter.setLoadAll(true);
-                } else {
-                    mAdapter.reset();
-                }
-                if (mPtrClassicFrame.isShown()) {
-                    mPtrClassicFrame.refreshComplete();
-                }
-                mPage++;
-                break;
-            default:
-                break;
-        }
-        return false;
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,8 +73,8 @@ public class CoordinatorActivity extends AppCompatActivity implements Handler.Ca
     }
 
     private void initData() {
-        mHandler = new Handler(this);
         mData = new ArrayList<String>();
+        showData();
     }
 
     private void bindEvent() {
@@ -163,11 +117,46 @@ public class CoordinatorActivity extends AppCompatActivity implements Handler.Ca
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                for (int i = 0; i < 20; i++) {
+                int size = 0;
+                if (mData != null) {
+                    size = mData.size();
+                }
+                for (int i = size; i < size + 20; i++) {
                     mData.add("Text" + i);
                 }
-                mHandler.sendEmptyMessage(1);
+                showData();
             }
         }, 1000);
+    }
+
+    private void showData() {
+        if (mAdapter == null) {
+            mGridManager = new GridLayoutManager(this, 3);
+            mGridManager.setOrientation(GridLayoutManager.VERTICAL);
+            mRecyclerView.setLayoutManager(mGridManager);
+
+            mAdapter = new GridAdapter(mData, new OnLoadMoreListener() {
+                @Override
+                public void onLoadMore() {
+                    mPage++;
+                    getData();
+                }
+            });
+            mRecyclerView.setAdapter(mAdapter);
+            mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+
+            mAdapter.setOnItemClickListener(new OnItemClickListener() {
+                @Override
+                public void onItemClick(View view, int position) {
+                    Toast.makeText(CoordinatorActivity.this, "点击了" + position, Toast.LENGTH_SHORT).show();
+
+                }
+            });
+        }
+        //模拟全部加载完成
+        mAdapter.reset();
+        if (mPtrClassicFrame.isShown()) {
+            mPtrClassicFrame.refreshComplete();
+        }
     }
 }

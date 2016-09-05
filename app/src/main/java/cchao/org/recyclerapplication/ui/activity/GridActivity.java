@@ -3,11 +3,9 @@ package cchao.org.recyclerapplication.ui.activity;
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
 import android.widget.Toast;
 
@@ -15,7 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cchao.org.recyclerapplication.R;
-import cchao.org.recyclerapplication.decoration.DividerWaterFallItemDecoration;
 import cchao.org.recyclerapplication.listener.OnItemClickListener;
 import cchao.org.recyclerapplication.listener.OnLoadMoreListener;
 import cchao.org.recyclerapplication.ui.adapter.GridAdapter;
@@ -24,7 +21,7 @@ import in.srain.cube.views.ptr.PtrDefaultHandler;
 import in.srain.cube.views.ptr.PtrFrameLayout;
 import in.srain.cube.views.ptr.PtrHandler;
 
-public class GridActivity extends Activity implements Handler.Callback {
+public class GridActivity extends Activity {
 
     private int mPage = 1;
 
@@ -35,52 +32,6 @@ public class GridActivity extends Activity implements Handler.Callback {
     private GridAdapter mAdapter;
 
     private List<String> mData;
-
-    private Handler mHandler;
-
-    @Override
-    public boolean handleMessage(Message msg) {
-        switch (msg.what) {
-            case 1:
-                if (mAdapter == null) {
-                    mGridManager = new GridLayoutManager(this, 2);
-                    mGridManager.setOrientation(GridLayoutManager.VERTICAL);
-                    mRecyclerView.setLayoutManager(mGridManager);
-
-                    mAdapter = new GridAdapter(mData, mRecyclerView, new OnLoadMoreListener() {
-                        @Override
-                        public void onLoadMore() {
-                            getData();
-                        }
-                    });
-                    mRecyclerView.setAdapter(mAdapter);
-                    mRecyclerView.addItemDecoration(new DividerWaterFallItemDecoration(GridActivity.this));
-                    mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-
-                    mAdapter.setOnItemClickListener(new OnItemClickListener() {
-                        @Override
-                        public void onItemClick(View view, int position) {
-                            Toast.makeText(GridActivity.this, "点击了" + position, Toast.LENGTH_SHORT).show();
-
-                        }
-                    });
-                }
-                //模拟全部加载完成
-                if (mPage == 3) {
-                    mAdapter.setLoadAll(true);
-                } else {
-                    mAdapter.reset();
-                }
-                if (mPtrClassicFrame.isShown()) {
-                    mPtrClassicFrame.refreshComplete();
-                }
-                mPage++;
-                break;
-            default:
-                break;
-        }
-        return false;
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,8 +49,8 @@ public class GridActivity extends Activity implements Handler.Callback {
     }
 
     private void initData() {
-        mHandler = new Handler(this);
         mData = new ArrayList<String>();
+        showData();
     }
 
     private void bindEvent() {
@@ -136,11 +87,45 @@ public class GridActivity extends Activity implements Handler.Callback {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                for (int i = 0; i < 20; i++) {
+                int size = 0;
+                if (mData != null) {
+                    size = mData.size();
+                }
+                for (int i = size; i < size + 20; i++) {
                     mData.add("Text" + i);
                 }
-                mHandler.sendEmptyMessage(1);
+                showData();
             }
         }, 1000);
+    }
+
+    private void showData() {
+        if (mAdapter == null) {
+            mGridManager = new GridLayoutManager(this, 2);
+            mGridManager.setOrientation(GridLayoutManager.VERTICAL);
+            mRecyclerView.setLayoutManager(mGridManager);
+
+            mAdapter = new GridAdapter(mData, new OnLoadMoreListener() {
+                @Override
+                public void onLoadMore() {
+                    mPage++;
+                    getData();
+                }
+            });
+            mRecyclerView.setAdapter(mAdapter);
+            mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+
+            mAdapter.setOnItemClickListener(new OnItemClickListener() {
+                @Override
+                public void onItemClick(View view, int position) {
+                    Toast.makeText(GridActivity.this, "点击了" + position, Toast.LENGTH_SHORT).show();
+
+                }
+            });
+        }
+        mAdapter.reset();
+        if (mPtrClassicFrame.isShown()) {
+            mPtrClassicFrame.refreshComplete();
+        }
     }
 }

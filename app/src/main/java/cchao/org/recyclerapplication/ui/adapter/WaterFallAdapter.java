@@ -21,13 +21,13 @@ public class WaterFallAdapter extends LoadMoreAdapter {
     private List<Integer> mHeight;
     private List<String> mData;
 
-    public WaterFallAdapter(List<String> data, RecyclerView recyclerView, OnLoadMoreListener onLoadMoreListener) {
-        super(recyclerView, onLoadMoreListener);
+    public WaterFallAdapter(List<String> data, OnLoadMoreListener onLoadMoreListener) {
+        super(onLoadMoreListener);
         this.mData = data;
         //随机高度的初始化
         mHeight = new ArrayList<Integer>();
         for (int i = 0; i < mData.size(); i++) {
-            mHeight.add((int)(300 + Math.random() * 300));
+            mHeight.add((int)(100 + Math.random() * 100));
         }
     }
 
@@ -43,13 +43,14 @@ public class WaterFallAdapter extends LoadMoreAdapter {
         if (viewType == LOAD_MORE_ITEM) {
             return super.onCreateViewHolder(parent, viewType);
         } else {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.waterfall_recyclerview_item, parent, false);
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recyclerview_item, parent, false);
             return new NormalViewHolder(view);
         }
     }
 
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
+        super.onBindViewHolder(holder, position);
         if (holder instanceof NormalViewHolder) {
 
             ViewGroup.LayoutParams lp = ((NormalViewHolder) holder).mTextView.getLayoutParams();
@@ -73,7 +74,7 @@ public class WaterFallAdapter extends LoadMoreAdapter {
      * 添加数据时同时添加一个随机高度
      */
     public void addHeight() {
-        mHeight.add((int) (300 + Math.random() * 300));
+        mHeight.add((int) (100 + Math.random() * 100));
     }
 
     /**
@@ -99,7 +100,7 @@ public class WaterFallAdapter extends LoadMoreAdapter {
 
         public NormalViewHolder(View itemView) {
             super(itemView);
-            mTextView = (TextView) itemView.findViewById(R.id.waterfall_recyclerview_text);
+            mTextView = (TextView) itemView.findViewById(R.id.recyclerview_text);
         }
     }
 }

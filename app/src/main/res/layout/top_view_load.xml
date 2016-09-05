@@ -3,11 +3,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="60dp">
-
 
         <LinearLayout
             android:id="@+id/ptr_classic_header_rotate_view_header_text"
@@ -16,7 +14,6 @@
             android:layout_centerInParent="true"
             android:gravity="center"
             android:orientation="vertical">
-
 
             <TextView
                 android:id="@+id/ptr_classic_header_rotate_view_header_title"
@@ -35,14 +32,12 @@
                 android:textSize="10sp" />
         </LinearLayout>
 
-
         <FrameLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginRight="10dp"
             android:layout_toLeftOf="@+id/ptr_classic_header_rotate_view_header_text">
-
 
             <ImageView
                 android:id="@+id/ptr_classic_header_rotate_view"
@@ -51,7 +46,6 @@
                 android:layout_gravity="center"
                 android:src="@drawable/ptr_rotate_arrow" />
 
-
             <ProgressBar
                 android:id="@+id/ptr_classic_header_rotate_view_progressbar"
                 android:layout_width="@dimen/progressBar_size"
@@ -59,6 +53,7 @@
                 android:layout_gravity="center" />
 
         </FrameLayout>
+
     </RelativeLayout>
 
 </LinearLayout>
