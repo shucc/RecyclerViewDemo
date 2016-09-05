@@ -3,7 +3,6 @@ package cchao.org.recyclerapplication.ui.activity;
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -14,7 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cchao.org.recyclerapplication.R;
-import cchao.org.recyclerapplication.decoration.DividerWaterFallItemDecoration;
 import cchao.org.recyclerapplication.listener.OnItemClickListener;
 import cchao.org.recyclerapplication.listener.OnLoadMoreListener;
 import cchao.org.recyclerapplication.ui.adapter.WaterFallAdapter;

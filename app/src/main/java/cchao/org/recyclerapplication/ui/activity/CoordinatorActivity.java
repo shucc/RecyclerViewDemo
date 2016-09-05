@@ -1,7 +1,6 @@
 package cchao.org.recyclerapplication.ui.activity;
 
 import android.os.Handler;
-import android.os.Message;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -9,7 +8,6 @@ import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Toast;
@@ -18,7 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cchao.org.recyclerapplication.R;
-import cchao.org.recyclerapplication.decoration.DividerWaterFallItemDecoration;
 import cchao.org.recyclerapplication.listener.OnItemClickListener;
 import cchao.org.recyclerapplication.listener.OnItemLongClickListener;
 import cchao.org.recyclerapplication.listener.OnLoadMoreListener;
