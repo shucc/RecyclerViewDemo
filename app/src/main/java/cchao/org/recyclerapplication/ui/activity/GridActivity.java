@@ -101,20 +101,21 @@ public class GridActivity extends Activity {
 
     private void showData() {
         if (mAdapter == null) {
+
             mGridManager = new GridLayoutManager(this, 2);
             mGridManager.setOrientation(GridLayoutManager.VERTICAL);
             mRecyclerView.setLayoutManager(mGridManager);
+            mAdapter = new GridAdapter(mData);
+            mRecyclerView.setAdapter(mAdapter);
+            mRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
-            mAdapter = new GridAdapter(mData, new OnLoadMoreListener() {
+            mAdapter.setOnLoadMoreListener(new OnLoadMoreListener() {
                 @Override
                 public void onLoadMore() {
                     mPage++;
                     getData();
                 }
             });
-            mRecyclerView.setAdapter(mAdapter);
-            mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-
             mAdapter.setOnItemClickListener(new OnItemClickListener() {
                 @Override
                 public void onItemClick(View view, int position) {

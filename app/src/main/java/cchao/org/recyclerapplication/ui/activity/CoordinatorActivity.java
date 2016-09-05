@@ -20,6 +20,7 @@ import java.util.List;
 import cchao.org.recyclerapplication.R;
 import cchao.org.recyclerapplication.decoration.DividerWaterFallItemDecoration;
 import cchao.org.recyclerapplication.listener.OnItemClickListener;
+import cchao.org.recyclerapplication.listener.OnItemLongClickListener;
 import cchao.org.recyclerapplication.listener.OnLoadMoreListener;
 import cchao.org.recyclerapplication.ui.adapter.GridAdapter;
 import cchao.org.recyclerapplication.widget.MyPtrClassicFrameLayout;
@@ -131,25 +132,32 @@ public class CoordinatorActivity extends AppCompatActivity {
 
     private void showData() {
         if (mAdapter == null) {
+
             mGridManager = new GridLayoutManager(this, 3);
             mGridManager.setOrientation(GridLayoutManager.VERTICAL);
             mRecyclerView.setLayoutManager(mGridManager);
+            mAdapter = new GridAdapter(mData);
+            mRecyclerView.setAdapter(mAdapter);
+            mRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
-            mAdapter = new GridAdapter(mData, new OnLoadMoreListener() {
+            mAdapter.setOnLoadMoreListener(new OnLoadMoreListener() {
                 @Override
                 public void onLoadMore() {
                     mPage++;
                     getData();
                 }
             });
-            mRecyclerView.setAdapter(mAdapter);
-            mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-
             mAdapter.setOnItemClickListener(new OnItemClickListener() {
                 @Override
                 public void onItemClick(View view, int position) {
                     Toast.makeText(CoordinatorActivity.this, "点击了" + position, Toast.LENGTH_SHORT).show();
 
+                }
+            });
+            mAdapter.setOnItemLongClickListener(new OnItemLongClickListener() {
+                @Override
+                public void onItemLongClick(View view, int position) {
+                    Toast.makeText(CoordinatorActivity.this, "我是长按君" + position, Toast.LENGTH_SHORT).show();
                 }
             });
         }

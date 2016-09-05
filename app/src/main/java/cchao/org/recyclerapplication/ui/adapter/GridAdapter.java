@@ -9,17 +9,15 @@ import android.widget.TextView;
 import java.util.List;
 
 import cchao.org.recyclerapplication.R;
-import cchao.org.recyclerapplication.listener.OnLoadMoreListener;
 
 /**
  * Created by chenchao on 16/2/3.
  */
-public class GridAdapter extends LoadMoreAdapter {
+public class GridAdapter extends BaseAdapter {
 
     private List<String> mData;
 
-    public GridAdapter(List<String> data, OnLoadMoreListener onLoadMoreListener) {
-        super(onLoadMoreListener);
+    public GridAdapter(List<String> data) {
         this.mData = data;
     }
 
@@ -45,15 +43,6 @@ public class GridAdapter extends LoadMoreAdapter {
         super.onBindViewHolder(holder, position);
         if (holder instanceof NormalViewHolder) {
             ((NormalViewHolder)holder).mTextView.setText(mData.get(position));
-            if (onItemClickListener != null) {
-                ((NormalViewHolder)holder).itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        int pos = holder.getLayoutPosition();
-                        onItemClickListener.onItemClick(v, pos);
-                    }
-                });
-            }
         }
     }
 

@@ -13,12 +13,13 @@ import android.widget.TextView;
 
 import cchao.org.recyclerapplication.R;
 import cchao.org.recyclerapplication.listener.OnItemClickListener;
+import cchao.org.recyclerapplication.listener.OnItemLongClickListener;
 import cchao.org.recyclerapplication.listener.OnLoadMoreListener;
 
 /**
  * Created by chenchao on 16/2/3.
  */
-public abstract class LoadMoreAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public abstract class BaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private final String TAG = "LoadMoreAdapter";
 
@@ -27,7 +28,8 @@ public abstract class LoadMoreAdapter extends RecyclerView.Adapter<RecyclerView.
     private RecyclerView mRecyclerView;
 
     private OnLoadMoreListener onLoadMoreListener;
-    protected OnItemClickListener onItemClickListener;
+    private OnItemClickListener onItemClickListener;
+    private OnItemLongClickListener onItemLongClickListener;
 
     private boolean loading = true;
 
@@ -47,12 +49,17 @@ public abstract class LoadMoreAdapter extends RecyclerView.Adapter<RecyclerView.
 
     private FootViewHolder footViewHolder;
 
-    public LoadMoreAdapter(OnLoadMoreListener onloadMoreListener) {
-        this.onLoadMoreListener = onloadMoreListener;
+    public void setOnLoadMoreListener(OnLoadMoreListener onLoadMoreListener) {
+        this.onLoadMoreListener = onLoadMoreListener;
+        setLoadMoreListener();
     }
 
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
         this.onItemClickListener = onItemClickListener;
+    }
+
+    public void setOnItemLongClickListener(OnItemLongClickListener onItemLongClickListener) {
+        this.onItemLongClickListener = onItemLongClickListener;
     }
 
     @Override
@@ -82,7 +89,36 @@ public abstract class LoadMoreAdapter extends RecyclerView.Adapter<RecyclerView.
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
+        if (onItemClickListener != null && !(holder instanceof FootViewHolder)) {
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    int pos = holder.getLayoutPosition();
+                    onItemClickListener.onItemClick(view, pos);
+                }
+            });
+        }
+        if (onItemLongClickListener != null) {
+            holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    int pos = holder.getLayoutPosition();
+                    onItemLongClickListener.onItemLongClick(view, pos);
+                    return false;
+                }
+            });
+        }
+        if (holder instanceof FootViewHolder && mRecyclerView.getLayoutManager() instanceof StaggeredGridLayoutManager) {
+            mRecyclerView.post(new Runnable() {
+                @Override
+                public void run() {
+                    StaggeredGridLayoutManager.LayoutParams layoutParams = (StaggeredGridLayoutManager.LayoutParams) holder.itemView.getLayoutParams();
+                    layoutParams.setFullSpan(true);
+                    holder.itemView.setLayoutParams(layoutParams);
+                }
+            });
+        }
     }
 
     @Override
@@ -90,7 +126,6 @@ public abstract class LoadMoreAdapter extends RecyclerView.Adapter<RecyclerView.
         super.onAttachedToRecyclerView(recyclerView);
         if (mRecyclerView == null) {
             mRecyclerView = recyclerView;
-            setLoadMoreListener();
         }
         RecyclerView.LayoutManager manager = recyclerView.getLayoutManager();
         if (manager instanceof GridLayoutManager) {
@@ -98,7 +133,6 @@ public abstract class LoadMoreAdapter extends RecyclerView.Adapter<RecyclerView.
             gridManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
                 @Override
                 public int getSpanSize(int position) {
-                    Log.i(TAG, "gridLayout");
                     return (getItemViewType(position) == LOAD_MORE_ITEM ? gridManager.getSpanCount() : 1);
                 }
             });
@@ -106,11 +140,19 @@ public abstract class LoadMoreAdapter extends RecyclerView.Adapter<RecyclerView.
     }
 
     public final void reset() {
-        loading = false;
-        if (loadMorePos != -1) {
-            notifyItemRemoved(loadMorePos);
-        } else {
-            notifyDataSetChanged();
+        if (mRecyclerView != null) {
+            //TODO 不加post会出现bug
+            mRecyclerView.post(new Runnable() {
+                @Override
+                public void run() {
+                    loading = false;
+                    if (loadMorePos != -1) {
+                        notifyItemRemoved(loadMorePos);
+                    } else {
+                        notifyDataSetChanged();
+                    }
+                }
+            });
         }
     }
 
@@ -186,6 +228,8 @@ public abstract class LoadMoreAdapter extends RecyclerView.Adapter<RecyclerView.
                     }
                 });
             }
+        } else {
+            Log.i(TAG, "LoadMoreListener is null!");
         }
     }
 

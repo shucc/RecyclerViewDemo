@@ -10,24 +10,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cchao.org.recyclerapplication.R;
-import cchao.org.recyclerapplication.listener.OnLoadMoreListener;
 
 /**
  * Created by chenchao on 16/2/3.
  */
-public class WaterFallAdapter extends LoadMoreAdapter {
+public class WaterFallAdapter extends BaseAdapter {
 
     //瀑布流的高度
     private List<Integer> mHeight;
     private List<String> mData;
 
-    public WaterFallAdapter(List<String> data, OnLoadMoreListener onLoadMoreListener) {
-        super(onLoadMoreListener);
+    public WaterFallAdapter(List<String> data) {
         this.mData = data;
         //随机高度的初始化
         mHeight = new ArrayList<Integer>();
         for (int i = 0; i < mData.size(); i++) {
-            mHeight.add((int)(100 + Math.random() * 100));
+            mHeight.add((int)(300 + Math.random() * 300));
         }
     }
 
@@ -58,15 +56,6 @@ public class WaterFallAdapter extends LoadMoreAdapter {
             ((NormalViewHolder) holder).mTextView.setLayoutParams(lp);
 
             ((NormalViewHolder)holder).mTextView.setText(mData.get(position));
-            if (onItemClickListener != null) {
-                ((NormalViewHolder)holder).itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        int pos = holder.getLayoutPosition();
-                        onItemClickListener.onItemClick(v, pos);
-                    }
-                });
-            }
         }
     }
 
@@ -74,7 +63,7 @@ public class WaterFallAdapter extends LoadMoreAdapter {
      * 添加数据时同时添加一个随机高度
      */
     public void addHeight() {
-        mHeight.add((int) (100 + Math.random() * 100));
+        mHeight.add((int) (300 + Math.random() * 300));
     }
 
     /**

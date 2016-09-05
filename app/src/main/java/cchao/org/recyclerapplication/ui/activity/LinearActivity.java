@@ -7,10 +7,10 @@ package cchao.org.recyclerapplication.ui.activity;
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -114,17 +114,17 @@ public class LinearActivity extends Activity {
             mLinearManager = new LinearLayoutManager(LinearActivity.this);
             mLinearManager.setOrientation(LinearLayoutManager.VERTICAL);
             mRecyclerView.setLayoutManager(mLinearManager);
+            mAdapter = new LinearAdapter(mData);
+            mRecyclerView.setAdapter(mAdapter);
+            mRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
-            mAdapter = new LinearAdapter(mData, new OnLoadMoreListener() {
+            mAdapter.setOnLoadMoreListener(new OnLoadMoreListener() {
                 @Override
                 public void onLoadMore() {
                     mPage++;
                     getData();
                 }
             });
-            mRecyclerView.setAdapter(mAdapter);
-            mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-
             mAdapter.setOnItemClickListener(new OnItemClickListener() {
                 @Override
                 public void onItemClick(View view, int position) {

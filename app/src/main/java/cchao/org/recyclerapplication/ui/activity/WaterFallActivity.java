@@ -82,10 +82,8 @@ public class WaterFallActivity extends Activity {
     private void getData() {
         if (mPage == 1) {
             mData.clear();
-            if (!mData.isEmpty()) {
-                mAdapter.clearHeight();
-            }
             if (mAdapter != null) {
+                mAdapter.clearHeight();
                 mAdapter.setLoadAll(false);
             }
         }
@@ -109,19 +107,20 @@ public class WaterFallActivity extends Activity {
 
     private void showData() {
         if (mAdapter == null) {
-            mStaggerManager = new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL);
-            mRecyclerView.setLayoutManager(mStaggerManager);
 
-            mAdapter = new WaterFallAdapter(mData, new OnLoadMoreListener() {
+            mStaggerManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+            mRecyclerView.setLayoutManager(mStaggerManager);
+            mAdapter = new WaterFallAdapter(mData);
+            mRecyclerView.setAdapter(mAdapter);
+            mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+
+            mAdapter.setOnLoadMoreListener(new OnLoadMoreListener() {
                 @Override
                 public void onLoadMore() {
                     mPage++;
                     getData();
                 }
             });
-            mRecyclerView.setAdapter(mAdapter);
-            mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-
             mAdapter.setOnItemClickListener(new OnItemClickListener() {
                 @Override
                 public void onItemClick(View view, int position) {
