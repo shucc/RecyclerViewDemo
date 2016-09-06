@@ -17,4 +17,12 @@
     <style name="AppTheme.PopupOverlay"
         parent="ThemeOverlay.AppCompat.Light" />
 
+    <style name="MainBtn">
+        <item name="android:background">@color/colorAccent</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:textColor">@color/general_white</item>
+        <item name="android:layout_marginTop">8dp</item>
+    </style>
+
 </resources>

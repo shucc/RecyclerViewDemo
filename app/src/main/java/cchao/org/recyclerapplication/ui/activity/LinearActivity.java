@@ -3,7 +3,6 @@ package cchao.org.recyclerapplication.ui.activity;
 /**
  * Created by chenchao on 15/11/24.
  */
-
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;

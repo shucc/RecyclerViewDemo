@@ -23,7 +23,7 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     private final String TAG = "LoadMoreAdapter";
 
-    protected static final int LOAD_MORE_ITEM = -100;
+    private final int LOAD_MORE_ITEM = -100;
 
     private RecyclerView mRecyclerView;
 
@@ -47,24 +47,56 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<RecyclerView.View
     //是否全部加载完成
     private boolean isLoadAll = false;
 
+    private View headerView;
+    private View footerView;
+
+    //加载更多
     private FootViewHolder footViewHolder;
 
+    /**
+     * 设置加载更多回调
+     * @param onLoadMoreListener
+     */
     public void setOnLoadMoreListener(OnLoadMoreListener onLoadMoreListener) {
         this.onLoadMoreListener = onLoadMoreListener;
         setLoadMoreListener();
     }
 
+    /**
+     * 设置点击事件
+     * @param onItemClickListener
+     */
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
         this.onItemClickListener = onItemClickListener;
     }
 
+    /**
+     * 设置长按事件
+     * @param onItemLongClickListener
+     */
     public void setOnItemLongClickListener(OnItemLongClickListener onItemLongClickListener) {
         this.onItemLongClickListener = onItemLongClickListener;
     }
 
+    /**
+     * 添加底部
+     * @param view
+     */
+    public void addFooterView(View view) {
+
+    }
+
+    /**
+     * 添加头部
+     * @param view
+     */
+    public void addHeaderView(View view) {
+
+    }
+
     @Override
     public int getItemViewType(int position) {
-        if (position >= getDataSize()) {
+        if (position >= getCount()) {
             return LOAD_MORE_ITEM;
         }
         return super.getItemViewType(position);
@@ -73,23 +105,31 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<RecyclerView.View
     @Override
     public final int getItemCount() {
         if (loading)
-            return getDataSize() + 1;
-        return getDataSize();
+            return getCount() + 1;
+        return getCount();
     }
 
-    abstract int getDataSize();
+    public abstract int getCount();
+
+    protected abstract RecyclerView.ViewHolder onCreateView(ViewGroup parent, int viewType);
+
+    protected abstract void onBindView(RecyclerView.ViewHolder holder, int position);
 
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        if (footViewHolder == null) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.footer_view_load_more, parent, false);
-            footViewHolder = new FootViewHolder(view);
+    public final RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        if (viewType == LOAD_MORE_ITEM) {
+            if (footViewHolder == null) {
+                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.footer_view_load_more, parent, false);
+                footViewHolder = new FootViewHolder(view);
+            }
+            return footViewHolder;
+        } else {
+            return onCreateView(parent, viewType);
         }
-        return footViewHolder;
     }
 
     @Override
-    public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
+    public final void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
         if (onItemClickListener != null && !(holder instanceof FootViewHolder)) {
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -99,7 +139,7 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<RecyclerView.View
                 }
             });
         }
-        if (onItemLongClickListener != null) {
+        if (onItemLongClickListener != null && !(holder instanceof FootViewHolder)) {
             holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
@@ -119,6 +159,7 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<RecyclerView.View
                 }
             });
         }
+        onBindView(holder, position);
     }
 
     @Override
@@ -141,7 +182,7 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     public final void reset() {
         if (mRecyclerView != null) {
-            //TODO 不加post会出现bug
+            //必须主线程notify
             mRecyclerView.post(new Runnable() {
                 @Override
                 public void run() {
@@ -156,6 +197,10 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<RecyclerView.View
         }
     }
 
+    /**
+     * 设置是否已经全部加载完成
+     * @param loadAll
+     */
     public final void setLoadAll(boolean loadAll) {
         if (footViewHolder == null && mRecyclerView != null) {
             View view = LayoutInflater.from(mRecyclerView.getContext()).inflate(R.layout.footer_view_load_more, null);

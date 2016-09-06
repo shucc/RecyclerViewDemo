@@ -22,25 +22,20 @@ public class LinearAdapter extends BaseAdapter {
     }
 
     @Override
-    int getDataSize() {
+    public int getCount() {
         if (mData == null)
             return 0;
         return mData.size();
     }
 
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        if (viewType == LOAD_MORE_ITEM) {
-            return super.onCreateViewHolder(parent, viewType);
-        } else {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recyclerview_item, parent, false);
-            return new NormalViewHolder(view);
-        }
+    public RecyclerView.ViewHolder onCreateView(ViewGroup parent, int viewType) {
+                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recyclerview_item, parent, false);
+                return new NormalViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
-        super.onBindViewHolder(holder, position);
+    public void onBindView(final RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof NormalViewHolder) {
             ((NormalViewHolder)holder).mTextView.setText(mData.get(position));
         }
