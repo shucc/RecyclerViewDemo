@@ -17,31 +17,20 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        findViewById(R.id.activity_main_linear).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, LinearActivity.class));
-            }
-        });
+        setClick(R.id.activity_main_linear, LinearActivity.class);
+        setClick(R.id.activity_main_grid, GridActivity.class);
+        setClick(R.id.activity_main_waterfall, WaterFallActivity.class);
+        setClick(R.id.activity_main_coordinator, CoordinatorActivity.class);
+        setClick(R.id.activity_main_add_footerView, AddRemoveFooterActivity.class);
+    }
 
-        findViewById(R.id.activity_main_grid).setOnClickListener(new View.OnClickListener() {
+    private void setClick(int id, final Class<?> cls) {
+        findViewById(id).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, GridActivity.class));
-            }
-        });
-
-        findViewById(R.id.activity_main_waterfall).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, WaterFallActivity.class));
-            }
-        });
-        findViewById(R.id.activity_main_coordinator).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, CoordinatorActivity.class));
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this, cls));
             }
         });
     }
+
 }

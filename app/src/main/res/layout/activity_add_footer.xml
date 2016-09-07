@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerview"
+        android:layout_above="@+id/add_footView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <Button
+        android:id="@+id/add_footView"
+        style="@style/MainBtn"
+        android:layout_above="@+id/remove_footView"
+        android:text="Add footerView"/>
+
+    <Button
+        android:id="@+id/remove_footView"
+        style="@style/MainBtn"
+        android:layout_alignParentBottom="true"
+        android:text="Remove footerView"/>
+
+</RelativeLayout>

@@ -16,6 +16,9 @@ import cchao.org.recyclerapplication.listener.OnItemClickListener;
 import cchao.org.recyclerapplication.listener.OnItemLongClickListener;
 import cchao.org.recyclerapplication.listener.OnLoadMoreListener;
 
+import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
+import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
+
 /**
  * Created by chenchao on 16/2/3.
  */
@@ -24,6 +27,8 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<RecyclerView.View
     private final String TAG = "LoadMoreAdapter";
 
     private final int LOAD_MORE_ITEM = -100;
+    private final int FOOTER_VIEW_ITEM = -200;
+    private final int HEADER_VIEW_ITEM = -300;
 
     private RecyclerView mRecyclerView;
 
@@ -31,6 +36,7 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<RecyclerView.View
     private OnItemClickListener onItemClickListener;
     private OnItemLongClickListener onItemLongClickListener;
 
+    //是否显示加载中
     private boolean loading = true;
 
     private int visibleThreshold = 1;
@@ -47,11 +53,14 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<RecyclerView.View
     //是否全部加载完成
     private boolean isLoadAll = false;
 
-    private View headerView;
-    private View footerView;
+    private View headerView = null;
+    private View footerView = null;
 
     //加载更多
     private FootViewHolder footViewHolder;
+
+    private LinearLayout footerLayout;
+    private LinearLayout headerLayout;
 
     /**
      * 设置加载更多回调
@@ -83,7 +92,33 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<RecyclerView.View
      * @param view
      */
     public void addFooterView(View view) {
+        Log.i(TAG, "addFooterView");
+        if (view == null) {
+            throw new NullPointerException("FooterView is null!");
+        }
+        if (footerView != null) {
+            return;
+        }
+        footerView = view;
+        if (footerLayout == null && mRecyclerView != null) {
+            footerLayout = new LinearLayout(mRecyclerView.getContext());
+            footerLayout.setOrientation(LinearLayout.VERTICAL);
+            footerLayout.setLayoutParams(new RecyclerView.LayoutParams(MATCH_PARENT, WRAP_CONTENT));
+        }
+        footerLayout.removeAllViews();
+        footerLayout.addView(view);
+        notifyItemInserted(getItemCount() - 1);
+    }
 
+    /**
+     * 移除底部View
+     */
+    public void removeFooterView() {
+        if (footerView != null) {
+            footerLayout.removeAllViews();
+            footerView = null;
+            notifyItemRemoved(getItemCount());
+        }
     }
 
     /**
@@ -91,21 +126,29 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<RecyclerView.View
      * @param view
      */
     public void addHeaderView(View view) {
-
+        headerView = view;
     }
 
     @Override
     public int getItemViewType(int position) {
-        if (position >= getCount()) {
+        Log.i(TAG, "getItemViewType: " + position);
+        if (position >= getCount() && loading) {
             return LOAD_MORE_ITEM;
+        }
+        if (position >= getCount() && footerView != null) {
+            return FOOTER_VIEW_ITEM;
         }
         return super.getItemViewType(position);
     }
 
     @Override
     public final int getItemCount() {
-        if (loading)
+        if (loading) {
             return getCount() + 1;
+        }
+        if (footerView != null) {
+            return getCount() + 1;
+        }
         return getCount();
     }
 
@@ -117,12 +160,15 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     @Override
     public final RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        Log.i(TAG, "onCreateViewHolder: " + viewType);
         if (viewType == LOAD_MORE_ITEM) {
             if (footViewHolder == null) {
                 View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.footer_view_load_more, parent, false);
                 footViewHolder = new FootViewHolder(view);
             }
             return footViewHolder;
+        } else if (viewType == FOOTER_VIEW_ITEM) {
+            return new BaseHolder(footerLayout);
         } else {
             return onCreateView(parent, viewType);
         }
@@ -159,7 +205,9 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<RecyclerView.View
                 }
             });
         }
-        onBindView(holder, position);
+        if (!(holder instanceof BaseHolder)) {
+            onBindView(holder, position);
+        }
     }
 
     @Override
@@ -273,12 +321,20 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<RecyclerView.View
                     }
                 });
             }
-        } else {
-            Log.i(TAG, "LoadMoreListener is null!");
         }
     }
 
-    protected class FootViewHolder extends RecyclerView.ViewHolder {
+    private int findMax(int[] lastPositions) {
+        int max = lastPositions[0];
+        for (int value : lastPositions) {
+            if (value > max) {
+                max = value;
+            }
+        }
+        return max;
+    }
+
+    private class FootViewHolder extends BaseHolder {
 
         private LinearLayout mLLLoadNow;
         private TextView mTxtLoadMore;
@@ -291,13 +347,11 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<RecyclerView.View
         }
     }
 
-    private int findMax(int[] lastPositions) {
-        int max = lastPositions[0];
-        for (int value : lastPositions) {
-            if (value > max) {
-                max = value;
-            }
+    private class BaseHolder extends RecyclerView.ViewHolder {
+
+        public BaseHolder(View itemView) {
+            super(itemView);
         }
-        return max;
+
     }
 }

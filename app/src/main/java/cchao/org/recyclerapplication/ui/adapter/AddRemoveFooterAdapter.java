@@ -1,6 +1,7 @@
 package cchao.org.recyclerapplication.ui.adapter;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,13 +12,14 @@ import java.util.List;
 import cchao.org.recyclerapplication.R;
 
 /**
- * Created by chenchao on 16/2/3.
+ * Created by chenchao on 16/9/7.
+ * cc@cchao.org
  */
-public class GridAdapter extends BaseAdapter {
+public class AddRemoveFooterAdapter extends BaseAdapter {
 
     private List<String> mData;
 
-    public GridAdapter(List<String> data) {
+    public AddRemoveFooterAdapter(List<String> data) {
         this.mData = data;
     }
 
@@ -29,13 +31,13 @@ public class GridAdapter extends BaseAdapter {
     }
 
     @Override
-    public RecyclerView.ViewHolder onCreateView(ViewGroup parent, int viewType) {
+    protected RecyclerView.ViewHolder onCreateView(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recyclerview_item, parent, false);
         return new NormalViewHolder(view);
     }
 
     @Override
-    public void onBindView(final RecyclerView.ViewHolder holder, int position) {
+    protected void onBindView(RecyclerView.ViewHolder holder, int position) {
         ((NormalViewHolder)holder).mTextView.setText(mData.get(position));
     }
 

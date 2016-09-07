@@ -18,8 +18,8 @@
         <activity android:name=".ui.activity.GridActivity" />
         <activity android:name=".ui.activity.WaterFallActivity" />
         <activity android:name=".ui.activity.LinearActivity" />
-        <activity android:name=".ui.activity.CoordinatorActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".ui.activity.CoordinatorActivity" />
+        <activity android:name=".ui.activity.AddRemoveFooterActivity" />
     </application>
 
 </manifest>

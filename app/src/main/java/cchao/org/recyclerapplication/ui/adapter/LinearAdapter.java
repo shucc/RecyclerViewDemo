@@ -30,15 +30,13 @@ public class LinearAdapter extends BaseAdapter {
 
     @Override
     public RecyclerView.ViewHolder onCreateView(ViewGroup parent, int viewType) {
-                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recyclerview_item, parent, false);
-                return new NormalViewHolder(view);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recyclerview_item, parent, false);
+        return new NormalViewHolder(view);
     }
 
     @Override
     public void onBindView(final RecyclerView.ViewHolder holder, int position) {
-        if (holder instanceof NormalViewHolder) {
-            ((NormalViewHolder)holder).mTextView.setText(mData.get(position));
-        }
+        ((NormalViewHolder)holder).mTextView.setText(mData.get(position));
     }
 
     private class NormalViewHolder extends RecyclerView.ViewHolder{

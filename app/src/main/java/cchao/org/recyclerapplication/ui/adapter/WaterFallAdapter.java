@@ -44,13 +44,10 @@ public class WaterFallAdapter extends BaseAdapter {
 
     @Override
     public void onBindView(final RecyclerView.ViewHolder holder, int position) {
-        if (holder instanceof NormalViewHolder) {
-            ViewGroup.LayoutParams lp = ((NormalViewHolder) holder).mTextView.getLayoutParams();
-            lp.height = mHeight.get(position);
-            ((NormalViewHolder) holder).mTextView.setLayoutParams(lp);
-
-            ((NormalViewHolder)holder).mTextView.setText(mData.get(position));
-        }
+        ViewGroup.LayoutParams lp = ((NormalViewHolder) holder).mTextView.getLayoutParams();
+        lp.height = mHeight.get(position);
+        ((NormalViewHolder) holder).mTextView.setLayoutParams(lp);
+        ((NormalViewHolder)holder).mTextView.setText(mData.get(position));
     }
 
     /**
