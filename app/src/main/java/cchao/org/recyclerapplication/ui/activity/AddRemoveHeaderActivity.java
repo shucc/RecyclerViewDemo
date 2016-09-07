@@ -72,7 +72,7 @@ public class AddRemoveHeaderActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (adapter != null) {
-                    adapter.removeHeader();
+                    adapter.removeHeaderView();
                 }
             }
         });

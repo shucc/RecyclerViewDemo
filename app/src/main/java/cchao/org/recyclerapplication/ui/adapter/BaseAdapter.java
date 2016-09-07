@@ -97,7 +97,7 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<RecyclerView.View
             return;
         }
         footerView = view;
-        footerView.setLayoutParams(new ViewGroup.LayoutParams(MATCH_PARENT, WRAP_CONTENT));
+        footerView.setLayoutParams(new RecyclerView.LayoutParams(MATCH_PARENT, WRAP_CONTENT));
         notifyItemInserted(getItemCount() - 1);
     }
 
@@ -123,11 +123,11 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<RecyclerView.View
             return;
         }
         headerView = view;
-        headerView.setLayoutParams(new ViewGroup.LayoutParams(MATCH_PARENT, WRAP_CONTENT));
+        headerView.setLayoutParams(new RecyclerView.LayoutParams(MATCH_PARENT, WRAP_CONTENT));
         notifyDataSetChanged();
     }
 
-    public void removeHeader() {
+    public void removeHeaderView() {
         if (headerView != null) {
             headerView = null;
             notifyDataSetChanged();
