@@ -26,18 +26,19 @@ import in.srain.cube.views.ptr.PtrFrameLayout;
 import in.srain.cube.views.ptr.PtrHandler;
 
 public class CoordinatorActivity extends AppCompatActivity {
-    private int mPage = 1;
+    
+    private int pageNum = 1;
 
-    private MyPtrClassicFrameLayout mPtrClassicFrame;
+    private MyPtrClassicFrameLayout ptrLayout;
 
-    private RecyclerView mRecyclerView;
-    private GridLayoutManager mGridManager;
-    private GridAdapter mAdapter;
+    private RecyclerView recyclerView;
+    private GridLayoutManager gridManager;
+    private GridAdapter adapter;
 
-    private List<String> mData;
+    private List<String> data;
 
-    private AppBarLayout mAppBar;
-    private int mOffNum;
+    private AppBarLayout appBar;
+    private int offNum;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,62 +66,62 @@ public class CoordinatorActivity extends AppCompatActivity {
     }
 
     private void bindView() {
-        mAppBar = (AppBarLayout) findViewById(R.id.activity_coordinator_appbar);
-        mRecyclerView = (RecyclerView) findViewById(R.id.recyclerview);
-        mPtrClassicFrame = (MyPtrClassicFrameLayout) findViewById(R.id.ptrclassicframe);
+        appBar = (AppBarLayout) findViewById(R.id.activity_coordinator_appbar);
+        recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
+        ptrLayout = (MyPtrClassicFrameLayout) findViewById(R.id.ptrclassicframe);
     }
 
     private void initData() {
-        mData = new ArrayList<String>();
+        data = new ArrayList<String>();
         showData();
     }
 
     private void bindEvent() {
-        mAppBar.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+        appBar.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
             @Override
             public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
-                mOffNum = verticalOffset;
+                offNum = verticalOffset;
             }
         });
-        mPtrClassicFrame.setPtrHandler(new PtrHandler() {
+        ptrLayout.setPtrHandler(new PtrHandler() {
             @Override
             public boolean checkCanDoRefresh(PtrFrameLayout frame, View content, View header) {
-                return mOffNum == 0 && PtrDefaultHandler.checkContentCanBePulledDown(frame, content, header);
+                return offNum == 0 && PtrDefaultHandler.checkContentCanBePulledDown(frame, content, header);
             }
 
             @Override
             public void onRefreshBegin(PtrFrameLayout frame) {
-                mPage = 1;
-                if (mAdapter != null) {
-                    mAdapter.setLoadAll(false);
+                pageNum = 1;
+                if (adapter != null) {
+                    adapter.setLoadAll(false);
                 }
                 getData();
             }
         });
-        mPtrClassicFrame.setLastUpdateTimeRelateObject(this);
+        ptrLayout.setLastUpdateTimeRelateObject(this);
     }
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
         if (hasFocus) {
-            mPtrClassicFrame.autoRefresh();
+            ptrLayout.autoRefresh();
         }
     }
 
     private void getData() {
-        if (mPage == 1) {
-            mData.clear();
+        if (pageNum == 1) {
+            data.clear();
         }
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 int size = 0;
-                if (mData != null) {
-                    size = mData.size();
+                if (data != null) {
+                    size = data.size();
                 }
                 for (int i = size; i < size + 20; i++) {
-                    mData.add("Text" + i);
+                    data.add("Text" + i);
                 }
                 showData();
             }
@@ -128,30 +129,30 @@ public class CoordinatorActivity extends AppCompatActivity {
     }
 
     private void showData() {
-        if (mAdapter == null) {
+        if (adapter == null) {
 
-            mGridManager = new GridLayoutManager(this, 3);
-            mGridManager.setOrientation(GridLayoutManager.VERTICAL);
-            mRecyclerView.setLayoutManager(mGridManager);
-            mAdapter = new GridAdapter(mData);
-            mRecyclerView.setAdapter(mAdapter);
-            mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+            gridManager = new GridLayoutManager(this, 3);
+            gridManager.setOrientation(GridLayoutManager.VERTICAL);
+            recyclerView.setLayoutManager(gridManager);
+            adapter = new GridAdapter(data);
+            recyclerView.setAdapter(adapter);
+            recyclerView.setItemAnimator(new DefaultItemAnimator());
 
-            mAdapter.setOnLoadMoreListener(new OnLoadMoreListener() {
+            adapter.setOnLoadMoreListener(new OnLoadMoreListener() {
                 @Override
                 public void onLoadMore() {
-                    mPage++;
+                    pageNum++;
                     getData();
                 }
             });
-            mAdapter.setOnItemClickListener(new OnItemClickListener() {
+            adapter.setOnItemClickListener(new OnItemClickListener() {
                 @Override
                 public void onItemClick(View view, int position) {
                     Toast.makeText(CoordinatorActivity.this, "点击了" + position, Toast.LENGTH_SHORT).show();
 
                 }
             });
-            mAdapter.setOnItemLongClickListener(new OnItemLongClickListener() {
+            adapter.setOnItemLongClickListener(new OnItemLongClickListener() {
                 @Override
                 public void onItemLongClick(View view, int position) {
                     Toast.makeText(CoordinatorActivity.this, "我是长按君" + position, Toast.LENGTH_SHORT).show();
@@ -159,9 +160,9 @@ public class CoordinatorActivity extends AppCompatActivity {
             });
         }
         //模拟全部加载完成
-        mAdapter.reset();
-        if (mPtrClassicFrame.isShown()) {
-            mPtrClassicFrame.refreshComplete();
+        adapter.reset();
+        if (ptrLayout.isShown()) {
+            ptrLayout.refreshComplete();
         }
     }
 }

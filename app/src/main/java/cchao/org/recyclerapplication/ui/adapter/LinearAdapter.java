@@ -15,17 +15,17 @@ import cchao.org.recyclerapplication.R;
  */
 public class LinearAdapter extends BaseAdapter {
 
-    private List<String> mData;
+    private List<String> data;
 
     public LinearAdapter(List<String> data) {
-        this.mData = data;
+        this.data = data;
     }
 
     @Override
     public int getCount() {
-        if (mData == null)
+        if (data == null)
             return 0;
-        return mData.size();
+        return data.size();
     }
 
     @Override
@@ -36,7 +36,7 @@ public class LinearAdapter extends BaseAdapter {
 
     @Override
     public void onBindView(final RecyclerView.ViewHolder holder, int position) {
-        ((NormalViewHolder)holder).mTextView.setText(mData.get(position));
+        ((NormalViewHolder)holder).mTextView.setText(data.get(position));
     }
 
     private class NormalViewHolder extends RecyclerView.ViewHolder{

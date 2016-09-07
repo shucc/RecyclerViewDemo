@@ -22,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
         setClick(R.id.activity_main_waterfall, WaterFallActivity.class);
         setClick(R.id.activity_main_coordinator, CoordinatorActivity.class);
         setClick(R.id.activity_main_add_footerView, AddRemoveFooterActivity.class);
+        setClick(R.id.activity_main_add_headerView, AddRemoveHeaderActivity.class);
     }
 
     private void setClick(int id, final Class<?> cls) {

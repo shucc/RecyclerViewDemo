@@ -20,6 +20,7 @@
         <activity android:name=".ui.activity.LinearActivity" />
         <activity android:name=".ui.activity.CoordinatorActivity" />
         <activity android:name=".ui.activity.AddRemoveFooterActivity" />
+        <activity android:name=".ui.activity.AddRemoveHeaderActivity" />
     </application>
 
 </manifest>

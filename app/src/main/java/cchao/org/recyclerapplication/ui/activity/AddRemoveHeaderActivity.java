@@ -16,13 +16,13 @@ import java.util.List;
 
 import cchao.org.recyclerapplication.R;
 import cchao.org.recyclerapplication.listener.OnItemClickListener;
-import cchao.org.recyclerapplication.ui.adapter.AddRemoveFooterAdapter;
+import cchao.org.recyclerapplication.ui.adapter.AddRemoveHeaderAdapter;
 
 /**
- * Created by chenchao on 16/9/6.
+ * Created by chenchao on 16/9/7.
  * cc@cchao.org
  */
-public class AddRemoveFooterActivity extends AppCompatActivity {
+public class AddRemoveHeaderActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private Button addBtn;
@@ -30,14 +30,14 @@ public class AddRemoveFooterActivity extends AppCompatActivity {
 
     private List<String> data;
 
-    private AddRemoveFooterAdapter adapter;
+    private AddRemoveHeaderAdapter adapter;
 
-    private View footerView;
+    private View headerView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_remove_footer);
+        setContentView(R.layout.activity_add_remove_header);
 
         bindView();
         initData();
@@ -46,15 +46,15 @@ public class AddRemoveFooterActivity extends AppCompatActivity {
 
     private void bindView() {
         recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
-        addBtn = (Button) findViewById(R.id.add_footView);
-        removeBtn = (Button) findViewById(R.id.remove_footView);
+        addBtn = (Button) findViewById(R.id.add_headView);
+        removeBtn = (Button) findViewById(R.id.remove_headView);
     }
 
     private void initData() {
         data = new ArrayList<>();
-        footerView = getLayoutInflater().inflate(R.layout.footer_view, null);
-        for (int i = 0; i < 10; i++) {
-            data.add("Add Footer" + i);
+        headerView = getLayoutInflater().inflate(R.layout.header_view, null);
+        for (int i = 0; i < 40; i++) {
+            data.add("Test" + i);
         }
         showData();
     }
@@ -64,7 +64,7 @@ public class AddRemoveFooterActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (adapter != null) {
-                    adapter.addFooterView(footerView);
+                    adapter.addHeaderView(headerView);
                 }
             }
         });
@@ -72,7 +72,7 @@ public class AddRemoveFooterActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (adapter != null) {
-                    adapter.removeFooterView();
+                    adapter.removeHeader();
                 }
             }
         });
@@ -83,13 +83,13 @@ public class AddRemoveFooterActivity extends AppCompatActivity {
             GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
             gridLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
             recyclerView.setLayoutManager(gridLayoutManager);
-            adapter = new AddRemoveFooterAdapter(data);
+            adapter = new AddRemoveHeaderAdapter(data);
             recyclerView.setAdapter(adapter);
             recyclerView.setItemAnimator(new DefaultItemAnimator());
             adapter.setOnItemClickListener(new OnItemClickListener() {
                 @Override
                 public void onItemClick(View view, int position) {
-                    Toast.makeText(AddRemoveFooterActivity.this, "我是点击君" + data.get(position), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddRemoveHeaderActivity.this, "我是点击君" + data.get(position), Toast.LENGTH_SHORT).show();
                 }
             });
         }

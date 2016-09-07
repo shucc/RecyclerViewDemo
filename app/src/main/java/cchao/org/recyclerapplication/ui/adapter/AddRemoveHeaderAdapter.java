@@ -1,7 +1,6 @@
 package cchao.org.recyclerapplication.ui.adapter;
 
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,11 +14,11 @@ import cchao.org.recyclerapplication.R;
  * Created by chenchao on 16/9/7.
  * cc@cchao.org
  */
-public class AddRemoveFooterAdapter extends BaseAdapter {
+public class AddRemoveHeaderAdapter extends BaseAdapter {
 
     private List<String> data;
 
-    public AddRemoveFooterAdapter(List<String> data) {
+    public AddRemoveHeaderAdapter(List<String> data) {
         this.data = data;
     }
 

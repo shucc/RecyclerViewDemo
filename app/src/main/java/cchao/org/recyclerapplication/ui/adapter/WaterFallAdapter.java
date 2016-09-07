@@ -17,23 +17,23 @@ import cchao.org.recyclerapplication.R;
 public class WaterFallAdapter extends BaseAdapter {
 
     //瀑布流的高度
-    private List<Integer> mHeight;
-    private List<String> mData;
+    private List<Integer> heights;
+    private List<String> data;
 
     public WaterFallAdapter(List<String> data) {
-        this.mData = data;
+        this.data = data;
         //随机高度的初始化
-        mHeight = new ArrayList<Integer>();
-        for (int i = 0; i < mData.size(); i++) {
-            mHeight.add((int)(300 + Math.random() * 300));
+        heights = new ArrayList<Integer>();
+        for (int i = 0; i < data.size(); i++) {
+            heights.add((int)(300 + Math.random() * 300));
         }
     }
 
     @Override
     public int getCount() {
-        if (mData == null)
+        if (data == null)
             return 0;
-        return mData.size();
+        return data.size();
     }
 
     @Override
@@ -45,16 +45,16 @@ public class WaterFallAdapter extends BaseAdapter {
     @Override
     public void onBindView(final RecyclerView.ViewHolder holder, int position) {
         ViewGroup.LayoutParams lp = ((NormalViewHolder) holder).mTextView.getLayoutParams();
-        lp.height = mHeight.get(position);
+        lp.height = heights.get(position);
         ((NormalViewHolder) holder).mTextView.setLayoutParams(lp);
-        ((NormalViewHolder)holder).mTextView.setText(mData.get(position));
+        ((NormalViewHolder)holder).mTextView.setText(data.get(position));
     }
 
     /**
      * 添加数据时同时添加一个随机高度
      */
     public void addHeight() {
-        mHeight.add((int) (300 + Math.random() * 300));
+        heights.add((int) (300 + Math.random() * 300));
     }
 
     /**
@@ -62,15 +62,15 @@ public class WaterFallAdapter extends BaseAdapter {
      * @param location  移除的数据下标
      */
     public void deleteHeight(int location) {
-        mHeight.remove(location);
+        heights.remove(location);
     }
 
     /**
      * 数据全部刷新时clear高度
      */
     public void clearHeight() {
-        if (!mHeight.isEmpty()) {
-            mHeight.clear();
+        if (!heights.isEmpty()) {
+            heights.clear();
         }
     }
 

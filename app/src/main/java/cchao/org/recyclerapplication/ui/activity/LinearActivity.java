@@ -26,15 +26,15 @@ import in.srain.cube.views.ptr.PtrHandler;
 
 public class LinearActivity extends Activity {
 
-    private int mPage = 1;
+    private int pageNum = 1;
 
-    private MyPtrClassicFrameLayout mPtrClassicFrame;
+    private MyPtrClassicFrameLayout ptrLayout;
 
-    private RecyclerView mRecyclerView;
-    private LinearLayoutManager mLinearManager;
-    private LinearAdapter mAdapter;
+    private RecyclerView recyclerView;
+    private LinearLayoutManager linearManager;
+    private LinearAdapter adapter;
 
-    private List<String> mData;
+    private List<String> data;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,17 +47,17 @@ public class LinearActivity extends Activity {
     }
 
     private void bindView() {
-        mRecyclerView = (RecyclerView) findViewById(R.id.recyclerview);
-        mPtrClassicFrame = (MyPtrClassicFrameLayout) findViewById(R.id.ptrclassicframe);
+        recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
+        ptrLayout = (MyPtrClassicFrameLayout) findViewById(R.id.ptrclassicframe);
     }
 
     private void initData() {
-        mData = new ArrayList<String>();
+        data = new ArrayList<String>();
         showData();
     }
 
     private void bindEvent() {
-        mPtrClassicFrame.setPtrHandler(new PtrHandler() {
+        ptrLayout.setPtrHandler(new PtrHandler() {
             @Override
             public boolean checkCanDoRefresh(PtrFrameLayout frame, View content, View header) {
                 return PtrDefaultHandler.checkContentCanBePulledDown(frame, content, header);
@@ -65,40 +65,40 @@ public class LinearActivity extends Activity {
 
             @Override
             public void onRefreshBegin(PtrFrameLayout frame) {
-                mPage = 1;
-                if (mAdapter != null) {
-                    mAdapter.setLoadAll(false);
+                pageNum = 1;
+                if (adapter != null) {
+                    adapter.setLoadAll(false);
                 }
                 getData();
             }
         });
-        mPtrClassicFrame.setLastUpdateTimeRelateObject(this);
+        ptrLayout.setLastUpdateTimeRelateObject(this);
     }
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
         if (hasFocus) {
-            mPtrClassicFrame.autoRefresh();
+            ptrLayout.autoRefresh();
         }
     }
 
     private void getData() {
-        if (mPage == 1) {
-            mData.clear();
+        if (pageNum == 1) {
+            data.clear();
         }
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (mPage == 5 && mAdapter != null) {
-                    mAdapter.setLoadAll(true);
+                if (pageNum == 5 && adapter != null) {
+                    adapter.setLoadAll(true);
                 } else {
                     int size = 0;
-                    if (mData != null) {
-                        size = mData.size();
+                    if (data != null) {
+                        size = data.size();
                     }
                     for (int i = size; i < size + 20; i++) {
-                        mData.add("Text" + i);
+                        data.add("Text" + i);
                     }
                     showData();
                 }
@@ -107,23 +107,23 @@ public class LinearActivity extends Activity {
     }
 
     private void showData() {
-        if (mAdapter == null) {
+        if (adapter == null) {
 
-            mLinearManager = new LinearLayoutManager(LinearActivity.this);
-            mLinearManager.setOrientation(LinearLayoutManager.VERTICAL);
-            mRecyclerView.setLayoutManager(mLinearManager);
-            mAdapter = new LinearAdapter(mData);
-            mRecyclerView.setAdapter(mAdapter);
-            mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+            linearManager = new LinearLayoutManager(LinearActivity.this);
+            linearManager.setOrientation(LinearLayoutManager.VERTICAL);
+            recyclerView.setLayoutManager(linearManager);
+            adapter = new LinearAdapter(data);
+            recyclerView.setAdapter(adapter);
+            recyclerView.setItemAnimator(new DefaultItemAnimator());
 
-            mAdapter.setOnLoadMoreListener(new OnLoadMoreListener() {
+            adapter.setOnLoadMoreListener(new OnLoadMoreListener() {
                 @Override
                 public void onLoadMore() {
-                    mPage++;
+                    pageNum++;
                     getData();
                 }
             });
-            mAdapter.setOnItemClickListener(new OnItemClickListener() {
+            adapter.setOnItemClickListener(new OnItemClickListener() {
                 @Override
                 public void onItemClick(View view, int position) {
                     Toast.makeText(LinearActivity.this, "点击了" + position, Toast.LENGTH_SHORT).show();
@@ -131,9 +131,9 @@ public class LinearActivity extends Activity {
                 }
             });
         }
-        mAdapter.reset();
-        if (mPtrClassicFrame.isShown()) {
-            mPtrClassicFrame.refreshComplete();
+        adapter.reset();
+        if (ptrLayout.isShown()) {
+            ptrLayout.refreshComplete();
         }
     }
 }

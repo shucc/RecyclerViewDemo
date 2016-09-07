@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerview"
+        android:layout_above="@+id/add_headView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <Button
+        android:id="@+id/add_headView"
+        style="@style/MainBtn"
+        android:layout_above="@+id/remove_headView"
+        android:text="Add headerView"/>
+
+    <Button
+        android:id="@+id/remove_headView"
+        style="@style/MainBtn"
+        android:layout_alignParentBottom="true"
+        android:text="Remove headerView"/>
+
+</RelativeLayout>

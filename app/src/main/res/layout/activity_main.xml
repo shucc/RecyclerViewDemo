@@ -30,4 +30,9 @@
         style="@style/MainBtn"
         android:text="AddRemoveFooterView" />
 
+    <Button
+        android:id="@+id/activity_main_add_headerView"
+        style="@style/MainBtn"
+        android:text="AddRemoveHeaderView" />
+
 </LinearLayout>
