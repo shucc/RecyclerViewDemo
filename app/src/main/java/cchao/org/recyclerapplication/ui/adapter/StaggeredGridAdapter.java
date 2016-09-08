@@ -14,13 +14,13 @@ import cchao.org.recyclerapplication.R;
 /**
  * Created by chenchao on 16/2/3.
  */
-public class WaterFallAdapter extends BaseAdapter {
+public class StaggeredGridAdapter extends BaseAdapter {
 
     //瀑布流的高度
     private List<Integer> heights;
     private List<String> data;
 
-    public WaterFallAdapter(List<String> data) {
+    public StaggeredGridAdapter(List<String> data) {
         this.data = data;
         //随机高度的初始化
         heights = new ArrayList<Integer>();
@@ -38,7 +38,7 @@ public class WaterFallAdapter extends BaseAdapter {
 
     @Override
     public RecyclerView.ViewHolder onCreateView(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recyclerview_item, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_default, parent, false);
         return new NormalViewHolder(view);
     }
 

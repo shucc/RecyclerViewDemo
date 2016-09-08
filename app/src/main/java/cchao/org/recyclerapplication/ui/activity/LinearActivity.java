@@ -16,8 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cchao.org.recyclerapplication.R;
-import cchao.org.recyclerapplication.listener.OnItemClickListener;
-import cchao.org.recyclerapplication.listener.OnLoadMoreListener;
+import cchao.org.recyclerapplication.ui.adapter.BaseAdapter;
 import cchao.org.recyclerapplication.ui.adapter.LinearAdapter;
 import cchao.org.recyclerapplication.widget.MyPtrClassicFrameLayout;
 import in.srain.cube.views.ptr.PtrDefaultHandler;
@@ -36,12 +35,12 @@ public class LinearActivity extends Activity {
 
     private List<String> data;
 
-    private View footView;
+    private View loadMoreComplete;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_recycler);
+        setContentView(R.layout.activity_default);
 
         bindView();
         initData();
@@ -60,7 +59,7 @@ public class LinearActivity extends Activity {
         adapter.addHeaderView(headView);
         View loadView = getLayoutInflater().inflate(R.layout.load_more_custom, null);
         adapter.addLoadingView(loadView);
-        footView = getLayoutInflater().inflate(R.layout.footer_view, null);
+        loadMoreComplete = getLayoutInflater().inflate(R.layout.load_more_complete, null);
     }
 
     private void bindEvent() {
@@ -97,7 +96,7 @@ public class LinearActivity extends Activity {
         //全部加载完成
         if (pageNum == 4) {
             adapter.setLoadAll(true);
-            adapter.addFooterView(footView);
+            adapter.addFooterView(loadMoreComplete);
             return;
         }
         new Handler().postDelayed(new Runnable() {
@@ -125,14 +124,14 @@ public class LinearActivity extends Activity {
             recyclerView.setAdapter(adapter);
             recyclerView.setItemAnimator(new DefaultItemAnimator());
 
-            adapter.setOnLoadMoreListener(new OnLoadMoreListener() {
+            adapter.setOnLoadMoreListener(new BaseAdapter.OnLoadMoreListener() {
                 @Override
                 public void onLoadMore() {
                     pageNum++;
                     getData();
                 }
             });
-            adapter.setOnItemClickListener(new OnItemClickListener() {
+            adapter.setOnItemClickListener(new BaseAdapter.OnItemClickListener() {
                 @Override
                 public void onItemClick(View view, int position) {
                     Toast.makeText(LinearActivity.this, "点击了" + position, Toast.LENGTH_SHORT).show();

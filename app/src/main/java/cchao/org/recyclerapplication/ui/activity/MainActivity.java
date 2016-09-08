@@ -19,8 +19,9 @@ public class MainActivity extends AppCompatActivity {
 
         setClick(R.id.activity_main_linear, LinearActivity.class);
         setClick(R.id.activity_main_grid, GridActivity.class);
-        setClick(R.id.activity_main_waterfall, WaterFallActivity.class);
+        setClick(R.id.activity_main_waterfall, StaggeredGridActivity.class);
         setClick(R.id.activity_main_coordinator, CoordinatorActivity.class);
+        setClick(R.id.activity_main_multipleType, MultipleTypeActivity.class);
         setClick(R.id.activity_main_add_footerView, AddRemoveFooterActivity.class);
         setClick(R.id.activity_main_add_headerView, AddRemoveHeaderActivity.class);
     }

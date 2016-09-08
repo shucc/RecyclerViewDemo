@@ -13,8 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cchao.org.recyclerapplication.R;
-import cchao.org.recyclerapplication.listener.OnItemClickListener;
-import cchao.org.recyclerapplication.listener.OnLoadMoreListener;
+import cchao.org.recyclerapplication.ui.adapter.BaseAdapter;
 import cchao.org.recyclerapplication.ui.adapter.GridAdapter;
 import cchao.org.recyclerapplication.widget.MyPtrClassicFrameLayout;
 import in.srain.cube.views.ptr.PtrDefaultHandler;
@@ -36,7 +35,7 @@ public class GridActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_recycler);
+        setContentView(R.layout.activity_default);
 
         bindView();
         initData();
@@ -109,14 +108,14 @@ public class GridActivity extends Activity {
             recyclerView.setAdapter(adapter);
             recyclerView.setItemAnimator(new DefaultItemAnimator());
 
-            adapter.setOnLoadMoreListener(new OnLoadMoreListener() {
+            adapter.setOnLoadMoreListener(new BaseAdapter.OnLoadMoreListener() {
                 @Override
                 public void onLoadMore() {
                     pageNum++;
                     getData();
                 }
             });
-            adapter.setOnItemClickListener(new OnItemClickListener() {
+            adapter.setOnItemClickListener(new BaseAdapter.OnItemClickListener() {
                 @Override
                 public void onItemClick(View view, int position) {
                     Toast.makeText(GridActivity.this, "点击了" + position, Toast.LENGTH_SHORT).show();

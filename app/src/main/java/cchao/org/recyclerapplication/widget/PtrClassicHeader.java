@@ -61,7 +61,7 @@ public class PtrClassicHeader extends FrameLayout implements PtrUIHandler {
             mRotateAniTime = arr.getInt(in.srain.cube.views.ptr.R.styleable.PtrClassicHeader_ptr_rotate_ani_time, mRotateAniTime);
         }
         buildAnimation();
-        View header = LayoutInflater.from(getContext()).inflate(R.layout.top_view_load, this);
+        View header = LayoutInflater.from(getContext()).inflate(R.layout.refresh_top, this);
 
         mRotateView = header.findViewById(R.id.ptr_classic_header_rotate_view);
 

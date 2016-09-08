@@ -15,8 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cchao.org.recyclerapplication.R;
-import cchao.org.recyclerapplication.listener.OnItemClickListener;
 import cchao.org.recyclerapplication.ui.adapter.AddRemoveHeaderAdapter;
+import cchao.org.recyclerapplication.ui.adapter.BaseAdapter;
 
 /**
  * Created by chenchao on 16/9/7.
@@ -86,7 +86,7 @@ public class AddRemoveHeaderActivity extends AppCompatActivity {
             adapter = new AddRemoveHeaderAdapter(data);
             recyclerView.setAdapter(adapter);
             recyclerView.setItemAnimator(new DefaultItemAnimator());
-            adapter.setOnItemClickListener(new OnItemClickListener() {
+            adapter.setOnItemClickListener(new BaseAdapter.OnItemClickListener() {
                 @Override
                 public void onItemClick(View view, int position) {
                     Toast.makeText(AddRemoveHeaderActivity.this, "我是点击君" + data.get(position), Toast.LENGTH_SHORT).show();

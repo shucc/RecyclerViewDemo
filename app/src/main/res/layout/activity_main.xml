@@ -18,12 +18,17 @@
     <Button
         android:id="@+id/activity_main_waterfall"
         style="@style/MainBtn"
-        android:text="WaterFallActivity"/>
+        android:text="StaggeredGridActivity"/>
 
     <Button
         android:id="@+id/activity_main_coordinator"
         style="@style/MainBtn"
         android:text="CoordinatorActivity"/>
+
+    <Button
+        android:id="@+id/activity_main_multipleType"
+        style="@style/MainBtn"
+        android:text="MultipleTypeActivity"/>
 
     <Button
         android:id="@+id/activity_main_add_footerView"

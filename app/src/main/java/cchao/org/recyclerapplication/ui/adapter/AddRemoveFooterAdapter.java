@@ -1,7 +1,6 @@
 package cchao.org.recyclerapplication.ui.adapter;
 
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,7 +31,7 @@ public class AddRemoveFooterAdapter extends BaseAdapter {
 
     @Override
     protected RecyclerView.ViewHolder onCreateView(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recyclerview_item, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_default, parent, false);
         return new NormalViewHolder(view);
     }
 

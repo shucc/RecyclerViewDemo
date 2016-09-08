@@ -16,11 +16,12 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.activity.GridActivity" />
-        <activity android:name=".ui.activity.WaterFallActivity" />
+        <activity android:name=".ui.activity.StaggeredGridActivity" />
         <activity android:name=".ui.activity.LinearActivity" />
         <activity android:name=".ui.activity.CoordinatorActivity" />
         <activity android:name=".ui.activity.AddRemoveFooterActivity" />
         <activity android:name=".ui.activity.AddRemoveHeaderActivity" />
+        <activity android:name=".ui.activity.MultipleTypeActivity" />
     </application>
 
 </manifest>

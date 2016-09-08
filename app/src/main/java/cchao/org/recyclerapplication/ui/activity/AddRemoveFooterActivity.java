@@ -15,8 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cchao.org.recyclerapplication.R;
-import cchao.org.recyclerapplication.listener.OnItemClickListener;
 import cchao.org.recyclerapplication.ui.adapter.AddRemoveFooterAdapter;
+import cchao.org.recyclerapplication.ui.adapter.BaseAdapter;
 
 /**
  * Created by chenchao on 16/9/6.
@@ -86,7 +86,7 @@ public class AddRemoveFooterActivity extends AppCompatActivity {
             adapter = new AddRemoveFooterAdapter(data);
             recyclerView.setAdapter(adapter);
             recyclerView.setItemAnimator(new DefaultItemAnimator());
-            adapter.setOnItemClickListener(new OnItemClickListener() {
+            adapter.setOnItemClickListener(new BaseAdapter.OnItemClickListener() {
                 @Override
                 public void onItemClick(View view, int position) {
                     Toast.makeText(AddRemoveFooterActivity.this, "我是点击君" + data.get(position), Toast.LENGTH_SHORT).show();

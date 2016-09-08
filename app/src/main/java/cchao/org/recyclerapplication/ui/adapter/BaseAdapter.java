@@ -9,9 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import cchao.org.recyclerapplication.R;
-import cchao.org.recyclerapplication.listener.OnItemClickListener;
-import cchao.org.recyclerapplication.listener.OnItemLongClickListener;
-import cchao.org.recyclerapplication.listener.OnLoadMoreListener;
 
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
@@ -26,6 +23,7 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<RecyclerView.View
     private final int LOAD_MORE_ITEM = -100;
     private final int FOOTER_VIEW_ITEM = -200;
     private final int HEADER_VIEW_ITEM = -300;
+    private final int DEFAULT_VIEW_ITEM = -400;
 
     private RecyclerView recyclerView;
 
@@ -142,7 +140,7 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<RecyclerView.View
     }
 
     @Override
-    public int getItemViewType(int position) {
+    public final int getItemViewType(int position) {
         if (headerView != null && position == 0) {
             return HEADER_VIEW_ITEM;
         }
@@ -152,7 +150,11 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<RecyclerView.View
         if (footerView != null && position >= (headerView == null ? getCount() : getCount() + 1)) {
             return FOOTER_VIEW_ITEM;
         }
-        return super.getItemViewType(position);
+        return getItemType(headerView == null ? position : position - 1);
+    }
+
+    public int getItemType(int position) {
+        return DEFAULT_VIEW_ITEM;
     }
 
     @Override
@@ -203,7 +205,7 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<RecyclerView.View
         isLoadAll = loadAll;
     }
 
-    public abstract int getCount();
+    protected abstract int getCount();
 
     protected abstract RecyclerView.ViewHolder onCreateView(ViewGroup parent, int viewType);
 
@@ -212,8 +214,9 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<RecyclerView.View
     @Override
     public final RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == LOAD_MORE_ITEM) {
+            //设置默认loading
             if (loadView == null) {
-                loadView = LayoutInflater.from(parent.getContext()).inflate(R.layout.footer_view_load_more, parent, false);
+                loadView = LayoutInflater.from(parent.getContext()).inflate(R.layout.load_more_default, parent, false);
             }
             return new BaseHolder(loadView);
         } else if (viewType == FOOTER_VIEW_ITEM) {
@@ -366,5 +369,17 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<RecyclerView.View
             super(itemView);
         }
 
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(View view, int position);
+    }
+
+    public interface OnItemLongClickListener {
+        void onItemLongClick(View view, int position);
+    }
+
+    public interface OnLoadMoreListener {
+        void onLoadMore();
     }
 }
