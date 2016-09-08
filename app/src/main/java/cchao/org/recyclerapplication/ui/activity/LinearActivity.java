@@ -36,6 +36,8 @@ public class LinearActivity extends Activity {
 
     private List<String> data;
 
+    private View footView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,6 +56,11 @@ public class LinearActivity extends Activity {
     private void initData() {
         data = new ArrayList<String>();
         showData();
+        View headView = getLayoutInflater().inflate(R.layout.header_view, null);
+        adapter.addHeaderView(headView);
+        View loadView = getLayoutInflater().inflate(R.layout.load_more_custom, null);
+        adapter.addLoadingView(loadView);
+        footView = getLayoutInflater().inflate(R.layout.footer_view, null);
     }
 
     private void bindEvent() {
@@ -87,21 +94,23 @@ public class LinearActivity extends Activity {
         if (pageNum == 1) {
             data.clear();
         }
+        //全部加载完成
+        if (pageNum == 4) {
+            adapter.setLoadAll(true);
+            adapter.addFooterView(footView);
+            return;
+        }
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (pageNum == 5 && adapter != null) {
-                    adapter.setLoadAll(true);
-                } else {
-                    int size = 0;
-                    if (data != null) {
-                        size = data.size();
-                    }
-                    for (int i = size; i < size + 20; i++) {
-                        data.add("Text" + i);
-                    }
-                    showData();
+                int size = 0;
+                if (data != null) {
+                    size = data.size();
                 }
+                for (int i = size; i < size + 20; i++) {
+                    data.add("Text" + i);
+                }
+                showData();
             }
         }, 1000);
     }

@@ -4,12 +4,9 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import cchao.org.recyclerapplication.R;
 import cchao.org.recyclerapplication.listener.OnItemClickListener;
@@ -36,9 +33,6 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<RecyclerView.View
     private OnItemClickListener onItemClickListener;
     private OnItemLongClickListener onItemLongClickListener;
 
-    //是否显示加载中
-    private boolean loading = true;
-
     private int visibleThreshold = 1;
     private int lastVisibleItem, totalItemCount;
 
@@ -47,17 +41,15 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<RecyclerView.View
     //最后一个可见的item的位置
     private int lastVisibleItemPosition;
 
-    //正在加载中item position
-    private int loadMorePos = -1;
+    //是否显示加载中
+    private boolean loading = false;
 
     //是否全部加载完成
     private boolean isLoadAll = false;
 
     private View headerView = null;
     private View footerView = null;
-
-    //加载更多
-    private FootViewHolder footViewHolder;
+    private View loadView = null;
 
     /**
      * 设置加载更多回调
@@ -89,7 +81,6 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<RecyclerView.View
      * @param view
      */
     public void addFooterView(View view) {
-        Log.i(TAG, "addFooterView");
         if (view == null) {
             throw new NullPointerException("FooterView is null!");
         }
@@ -134,13 +125,28 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<RecyclerView.View
         }
     }
 
+    public void addLoadingView(View view) {
+        if (view == null) {
+            throw new NullPointerException("LoadingView is null!");
+        }
+        if (loadView != null) {
+            return;
+        }
+        loadView = view;
+        loadView.setLayoutParams(new RecyclerView.LayoutParams(MATCH_PARENT, WRAP_CONTENT));
+    }
+
+    private void removeLoadingView() {
+        loading = false;
+        notifyDataSetChanged();
+    }
+
     @Override
     public int getItemViewType(int position) {
-        Log.i(TAG, "getItemViewType: " + getCount() + "-->" + getItemCount());
         if (headerView != null && position == 0) {
             return HEADER_VIEW_ITEM;
         }
-        if (position >= getCount() && loading) {
+        if (position >= (headerView == null ? getCount() : getCount() + 1) && loading) {
             return LOAD_MORE_ITEM;
         }
         if (footerView != null && position >= (headerView == null ? getCount() : getCount() + 1)) {
@@ -152,6 +158,9 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<RecyclerView.View
     @Override
     public final int getItemCount() {
         int count = getCount();
+        if (count == 0) {
+            return 0;
+        }
         if (loading) {
             count++;
         }
@@ -164,6 +173,36 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<RecyclerView.View
         return count;
     }
 
+    public final void reset() {
+        if (recyclerView != null) {
+            //必须主线程notify
+            recyclerView.post(new Runnable() {
+                @Override
+                public void run() {
+                    if (loading) {
+                        removeLoadingView();
+                    } else {
+                        notifyDataSetChanged();
+                    }
+                    loading = false;
+                }
+            });
+        }
+    }
+
+    /**
+     * 设置是否已经全部加载完成
+     * @param loadAll
+     */
+    public final void setLoadAll(boolean loadAll) {
+        if (loading) {
+            reset();
+        } else if (!loadAll) {
+            footerView = null;
+        }
+        isLoadAll = loadAll;
+    }
+
     public abstract int getCount();
 
     protected abstract RecyclerView.ViewHolder onCreateView(ViewGroup parent, int viewType);
@@ -172,13 +211,11 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     @Override
     public final RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        Log.i(TAG, "onCreateViewHolder: " + viewType);
         if (viewType == LOAD_MORE_ITEM) {
-            if (footViewHolder == null) {
-                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.footer_view_load_more, parent, false);
-                footViewHolder = new FootViewHolder(view);
+            if (loadView == null) {
+                loadView = LayoutInflater.from(parent.getContext()).inflate(R.layout.footer_view_load_more, parent, false);
             }
-            return footViewHolder;
+            return new BaseHolder(loadView);
         } else if (viewType == FOOTER_VIEW_ITEM) {
             return new BaseHolder(footerView);
         } else if (viewType == HEADER_VIEW_ITEM) {
@@ -218,7 +255,8 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<RecyclerView.View
                 }
             });
         }
-        if (holder instanceof BaseHolder && recyclerView.getLayoutManager() instanceof StaggeredGridLayoutManager) {
+        RecyclerView.LayoutManager manager = recyclerView.getLayoutManager();
+        if (holder instanceof BaseHolder && manager instanceof StaggeredGridLayoutManager) {
             recyclerView.post(new Runnable() {
                 @Override
                 public void run() {
@@ -257,52 +295,11 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<RecyclerView.View
         }
     }
 
-    public final void reset() {
-        if (recyclerView != null) {
-            //必须主线程notify
-            recyclerView.post(new Runnable() {
-                @Override
-                public void run() {
-                    loading = false;
-                    if (loadMorePos != -1) {
-                        notifyItemRemoved(loadMorePos);
-                    } else {
-                        notifyDataSetChanged();
-                    }
-                }
-            });
-        }
-    }
-
-    /**
-     * 设置是否已经全部加载完成
-     * @param loadAll
-     */
-    public final void setLoadAll(boolean loadAll) {
-        if (footViewHolder == null && recyclerView != null) {
-            View view = LayoutInflater.from(recyclerView.getContext()).inflate(R.layout.footer_view_load_more, null);
-            footViewHolder = new FootViewHolder(view);
-        }
-        isLoadAll = loadAll;
-        if (isLoadAll && footViewHolder != null) {
-            footViewHolder.mLLLoadNow.setVisibility(View.INVISIBLE);
-            footViewHolder.mTxtLoadMore.setVisibility(View.VISIBLE);
-        } else if (footViewHolder != null) {
-            footViewHolder.mLLLoadNow.setVisibility(View.VISIBLE);
-            footViewHolder.mTxtLoadMore.setVisibility(View.INVISIBLE);
-        }
-        if (!isLoadAll) {
-            loadMorePos = -1;
-        }
-    }
-
     /**
      * 设置加载更多监听
      */
     private void setLoadMoreListener() {
         if (onLoadMoreListener != null) {
-            isLoadAll = false;
-            loadMorePos = -1;
             RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
             if (layoutManager instanceof LinearLayoutManager) {
                 final LinearLayoutManager linearLayoutManager = (LinearLayoutManager) layoutManager;
@@ -312,9 +309,9 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<RecyclerView.View
                         super.onScrolled(recyclerView, dx, dy);
                         totalItemCount = linearLayoutManager.getItemCount();
                         lastVisibleItem = linearLayoutManager.findLastVisibleItemPosition();
-                        if (!loading && totalItemCount <= (lastVisibleItem + visibleThreshold) && dy > 0 && !isLoadAll) {
+                        if (!loading && totalItemCount <= (lastVisibleItem + visibleThreshold)
+                                && dy > 0 && !isLoadAll && getCount() > 0) {
                             loading = true;
-                            loadMorePos = getItemCount() - 1;
                             recyclerView.post(new Runnable() {
                                 @Override
                                 public void run() {
@@ -336,9 +333,9 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<RecyclerView.View
                         }
                         staggeredGridLayoutManager.findLastVisibleItemPositions(lastPositions);
                         lastVisibleItemPosition = findMax(lastPositions);
-                        if (!loading && staggeredGridLayoutManager.getItemCount() <= lastVisibleItemPosition + 1 && dy > 0 && !isLoadAll) {
+                        if (!loading && staggeredGridLayoutManager.getItemCount() <= lastVisibleItemPosition + 1
+                                && dy > 0 && !isLoadAll && getCount() > 0) {
                             loading = true;
-                            loadMorePos = getItemCount() - 1;
                             recyclerView.post(new Runnable() {
                                 @Override
                                 public void run() {
@@ -361,19 +358,6 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<RecyclerView.View
             }
         }
         return max;
-    }
-
-    private class FootViewHolder extends BaseHolder {
-
-        private LinearLayout mLLLoadNow;
-        private TextView mTxtLoadMore;
-
-        public FootViewHolder(View itemView) {
-            super(itemView);
-
-            mLLLoadNow = (LinearLayout) itemView.findViewById(R.id.footer_view_load_now);
-            mTxtLoadMore = (TextView) itemView.findViewById(R.id.footer_view_load_all);
-        }
     }
 
     private class BaseHolder extends RecyclerView.ViewHolder {
