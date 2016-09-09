@@ -4,6 +4,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +32,7 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<RecyclerView.View
     private OnItemClickListener onItemClickListener;
     private OnItemLongClickListener onItemLongClickListener;
 
+    //1表示表示滑动至最后一个开始加在更多
     private int visibleThreshold = 1;
     private int lastVisibleItem, totalItemCount;
 
@@ -72,6 +74,24 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<RecyclerView.View
      */
     public void setOnItemLongClickListener(OnItemLongClickListener onItemLongClickListener) {
         this.onItemLongClickListener = onItemLongClickListener;
+    }
+
+    /**
+     * 设置提前加载
+     * @param num
+     */
+    public void setVisibleThreshold(int num) {
+        visibleThreshold = num;
+        if (recyclerView != null) {
+            //网格或瀑布布局特殊处理
+            RecyclerView.LayoutManager manager = recyclerView.getLayoutManager();
+            if (manager instanceof GridLayoutManager) {
+                visibleThreshold = visibleThreshold * ((GridLayoutManager) manager).getSpanCount();
+            }
+            if (manager instanceof StaggeredGridLayoutManager) {
+                visibleThreshold = visibleThreshold * ((StaggeredGridLayoutManager) manager).getSpanCount();
+            }
+        }
     }
 
     /**
@@ -144,7 +164,7 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<RecyclerView.View
         if (headerView != null && position == 0) {
             return HEADER_VIEW_ITEM;
         }
-        if (position >= (headerView == null ? getCount() : getCount() + 1) && loading) {
+        if (position >= (headerView == null ? getCount() : getCount() + 1) && loading && loadView != null) {
             return LOAD_MORE_ITEM;
         }
         if (footerView != null && position >= (headerView == null ? getCount() : getCount() + 1)) {
@@ -163,7 +183,7 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<RecyclerView.View
         if (count == 0) {
             return 0;
         }
-        if (loading) {
+        if (loading && loadView != null) {
             count++;
         }
         if (footerView != null) {
@@ -214,10 +234,6 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<RecyclerView.View
     @Override
     public final RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == LOAD_MORE_ITEM) {
-            //设置默认loading
-            if (loadView == null) {
-                loadView = LayoutInflater.from(parent.getContext()).inflate(R.layout.load_more_default, parent, false);
-            }
             return new BaseHolder(loadView);
         } else if (viewType == FOOTER_VIEW_ITEM) {
             return new BaseHolder(footerView);
@@ -318,7 +334,10 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<RecyclerView.View
                             recyclerView.post(new Runnable() {
                                 @Override
                                 public void run() {
-                                    notifyItemInserted(getItemCount() - 1);
+                                    Log.i(TAG, "run: " + totalItemCount + "-->" + lastVisibleItem + "-->" + visibleThreshold);
+                                    if (loadView != null) {
+                                        notifyItemInserted(getItemCount() - 1);
+                                    }
                                     onLoadMoreListener.onLoadMore();
                                 }
                             });
@@ -342,7 +361,9 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<RecyclerView.View
                             recyclerView.post(new Runnable() {
                                 @Override
                                 public void run() {
-                                    notifyItemInserted(getItemCount() - 1);
+                                    if (loadView != null) {
+                                        notifyItemInserted(getItemCount() - 1);
+                                    }
                                     onLoadMoreListener.onLoadMore();
                                 }
                             });

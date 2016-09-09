@@ -107,6 +107,8 @@ public class GridActivity extends Activity {
             adapter = new GridAdapter(data);
             recyclerView.setAdapter(adapter);
             recyclerView.setItemAnimator(new DefaultItemAnimator());
+            View loadView = getLayoutInflater().inflate(R.layout.load_more_default, null);
+            adapter.addLoadingView(loadView);
 
             adapter.setOnLoadMoreListener(new BaseAdapter.OnLoadMoreListener() {
                 @Override
