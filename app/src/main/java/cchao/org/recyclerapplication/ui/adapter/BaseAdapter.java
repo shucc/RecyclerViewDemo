@@ -4,12 +4,8 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import cchao.org.recyclerapplication.R;
 
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
@@ -21,10 +17,10 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     private final String TAG = "LoadMoreAdapter";
 
-    private final int LOAD_MORE_ITEM = -100;
-    private final int FOOTER_VIEW_ITEM = -200;
-    private final int HEADER_VIEW_ITEM = -300;
-    private final int DEFAULT_VIEW_ITEM = -400;
+    private final int TYPE_LOAD_MORE = -100;
+    private final int TYPE_FOOTER = -200;
+    private final int TYPE_HEADER = -300;
+    private final int TYPE_DEFAULT = -400;
 
     private RecyclerView recyclerView;
 
@@ -162,19 +158,19 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<RecyclerView.View
     @Override
     public final int getItemViewType(int position) {
         if (headerView != null && position == 0) {
-            return HEADER_VIEW_ITEM;
+            return TYPE_HEADER;
         }
         if (position >= (headerView == null ? getCount() : getCount() + 1) && loading && loadView != null) {
-            return LOAD_MORE_ITEM;
+            return TYPE_LOAD_MORE;
         }
         if (footerView != null && position >= (headerView == null ? getCount() : getCount() + 1)) {
-            return FOOTER_VIEW_ITEM;
+            return TYPE_FOOTER;
         }
         return getItemType(headerView == null ? position : position - 1);
     }
 
     public int getItemType(int position) {
-        return DEFAULT_VIEW_ITEM;
+        return TYPE_DEFAULT;
     }
 
     @Override
@@ -233,60 +229,75 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     @Override
     public final RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        if (viewType == LOAD_MORE_ITEM) {
+        if (viewType == TYPE_LOAD_MORE) {
             return new BaseHolder(loadView);
-        } else if (viewType == FOOTER_VIEW_ITEM) {
+        } else if (viewType == TYPE_FOOTER) {
             return new BaseHolder(footerView);
-        } else if (viewType == HEADER_VIEW_ITEM) {
+        } else if (viewType == TYPE_HEADER) {
             return new BaseHolder(headerView);
         } else {
-            return onCreateView(parent, viewType);
+            final RecyclerView.ViewHolder viewHolder = onCreateView(parent, viewType);
+            if (onItemClickListener != null) {
+                viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        int pos = viewHolder.getAdapterPosition();
+                        if (headerView != null) {
+                            pos = pos - 1;
+                        }
+                        onItemClickListener.onItemClick(v, pos);
+                    }
+                });
+            }
+            if (onItemLongClickListener != null) {
+                viewHolder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View v) {
+                        int pos = viewHolder.getAdapterPosition();
+                        if (headerView != null) {
+                            pos = pos - 1;
+                        }
+                        onItemLongClickListener.onItemLongClick(v, pos);
+                        return false;
+                    }
+                });
+            }
+            return viewHolder;
         }
     }
 
     @Override
-    public final void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
-        if (headerView != null) {
-            position = position - 1;
-        }
-        if (onItemClickListener != null && !(holder instanceof BaseHolder)) {
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    int pos = holder.getLayoutPosition();
-                    if (headerView != null) {
-                        pos = pos - 1;
-                    }
-                    onItemClickListener.onItemClick(view, pos);
-                }
-            });
-        }
-        if (onItemLongClickListener != null && !(holder instanceof BaseHolder)) {
-            holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View view) {
-                    int pos = holder.getLayoutPosition();
-                    if (headerView != null) {
-                        pos = pos - 1;
-                    }
-                    onItemLongClickListener.onItemLongClick(view, pos);
-                    return false;
-                }
-            });
-        }
-        RecyclerView.LayoutManager manager = recyclerView.getLayoutManager();
-        if (holder instanceof BaseHolder && manager instanceof StaggeredGridLayoutManager) {
-            recyclerView.post(new Runnable() {
-                @Override
-                public void run() {
-                    StaggeredGridLayoutManager.LayoutParams layoutParams = (StaggeredGridLayoutManager.LayoutParams) holder.itemView.getLayoutParams();
-                    layoutParams.setFullSpan(true);
-                    holder.itemView.setLayoutParams(layoutParams);
-                }
-            });
-        }
+    public final void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (!(holder instanceof BaseHolder)) {
+            position = holder.getAdapterPosition();
+            if (headerView != null) {
+                position = position - 1;
+            }
             onBindView(holder, position);
+        }
+    }
+
+    @Override
+    public void onViewAttachedToWindow(RecyclerView.ViewHolder holder) {
+        super.onViewAttachedToWindow(holder);
+        if (isStaggeredGridLayout(holder)) {
+            handleLayoutIfStaggeredGridLayout(holder);
+        }
+    }
+
+    private boolean isStaggeredGridLayout(RecyclerView.ViewHolder holder) {
+        ViewGroup.LayoutParams layoutParams = holder.itemView.getLayoutParams();
+        if (layoutParams != null && layoutParams instanceof StaggeredGridLayoutManager.LayoutParams) {
+            return true;
+        }
+        return false;
+    }
+
+    protected void handleLayoutIfStaggeredGridLayout(RecyclerView.ViewHolder holder) {
+        int viewType = holder.getItemViewType();
+        if (viewType == TYPE_LOAD_MORE || viewType == TYPE_HEADER || viewType == TYPE_FOOTER) {
+            StaggeredGridLayoutManager.LayoutParams p = (StaggeredGridLayoutManager.LayoutParams) holder.itemView.getLayoutParams();
+            p.setFullSpan(true);
         }
     }
 
@@ -298,13 +309,13 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<RecyclerView.View
         }
         RecyclerView.LayoutManager manager = recyclerView.getLayoutManager();
         if (manager instanceof GridLayoutManager) {
-            final GridLayoutManager gridManager = ((GridLayoutManager) manager);
+            final GridLayoutManager gridManager = (GridLayoutManager) manager;
             gridManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
                 @Override
                 public int getSpanSize(int position) {
                     int viewType = getItemViewType(position);
-                    if (viewType == LOAD_MORE_ITEM || viewType == HEADER_VIEW_ITEM
-                            || viewType == FOOTER_VIEW_ITEM) {
+                    if (viewType == TYPE_LOAD_MORE || viewType == TYPE_HEADER
+                            || viewType == TYPE_FOOTER) {
                         return gridManager.getSpanCount();
                     } else {
                         return 1;
@@ -334,7 +345,6 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<RecyclerView.View
                             recyclerView.post(new Runnable() {
                                 @Override
                                 public void run() {
-                                    Log.i(TAG, "run: " + totalItemCount + "-->" + lastVisibleItem + "-->" + visibleThreshold);
                                     if (loadView != null) {
                                         notifyItemInserted(getItemCount() - 1);
                                     }
