@@ -24,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
         setClick(R.id.activity_main_multipleType, MultipleTypeActivity.class);
         setClick(R.id.activity_main_add_footerView, AddRemoveFooterActivity.class);
         setClick(R.id.activity_main_add_headerView, AddRemoveHeaderActivity.class);
+        setClick(R.id.activity_main_auto_scroll, AutoScrollActivity.class);
     }
 
     private void setClick(int id, final Class<?> cls) {

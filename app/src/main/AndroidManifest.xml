@@ -22,6 +22,7 @@
         <activity android:name=".ui.activity.AddRemoveFooterActivity" />
         <activity android:name=".ui.activity.AddRemoveHeaderActivity" />
         <activity android:name=".ui.activity.MultipleTypeActivity" />
+        <activity android:name=".ui.activity.AutoScrollActivity" />
     </application>
 
 </manifest>
