@@ -15,8 +15,8 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import cchao.org.baseadapterlibrary.BaseAdapter;
 import cchao.org.recyclerapplication.R;
-import cchao.org.recyclerapplication.ui.adapter.BaseAdapter;
 import cchao.org.recyclerapplication.ui.adapter.GridAdapter;
 import cchao.org.recyclerapplication.widget.MyPtrClassicFrameLayout;
 import in.srain.cube.views.ptr.PtrDefaultHandler;

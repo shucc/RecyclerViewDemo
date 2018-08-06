@@ -3,7 +3,6 @@ package cchao.org.recyclerapplication.ui.activity;
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,8 +12,8 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import cchao.org.baseadapterlibrary.BaseAdapter;
 import cchao.org.recyclerapplication.R;
-import cchao.org.recyclerapplication.ui.adapter.BaseAdapter;
 import cchao.org.recyclerapplication.ui.adapter.LinearAdapter;
 import cchao.org.recyclerapplication.widget.CustomScrollView;
 

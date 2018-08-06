@@ -14,9 +14,9 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import cchao.org.baseadapterlibrary.BaseAdapter;
 import cchao.org.recyclerapplication.R;
 import cchao.org.recyclerapplication.ui.adapter.AddRemoveFooterAdapter;
-import cchao.org.recyclerapplication.ui.adapter.BaseAdapter;
 
 /**
  * Created by chenchao on 16/9/6.

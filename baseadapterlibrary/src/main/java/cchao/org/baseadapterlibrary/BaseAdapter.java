@@ -1,4 +1,4 @@
-package cchao.org.recyclerapplication.ui.adapter;
+package cchao.org.baseadapterlibrary;
 
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,7 +13,7 @@ import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 /**
  * Created by chenchao on 16/2/3.
  */
-public abstract class BaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public abstract class BaseAdapter<T extends BaseHolder> extends RecyclerView.Adapter<BaseHolder> {
 
     private final String TAG = "LoadMoreAdapter";
 
@@ -223,20 +223,20 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     protected abstract int getCount();
 
-    protected abstract RecyclerView.ViewHolder onCreateView(ViewGroup parent, int viewType);
+    protected abstract BaseHolder onCreateView(ViewGroup parent, int viewType);
 
-    protected abstract void onBindView(RecyclerView.ViewHolder holder, int position);
+    protected abstract void onBindView(T holder, int position);
 
     @Override
-    public final RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public final BaseHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == TYPE_LOAD_MORE) {
-            return new BaseHolder(loadView);
+            return new SpecialHolder(loadView);
         } else if (viewType == TYPE_FOOTER) {
-            return new BaseHolder(footerView);
+            return new SpecialHolder(footerView);
         } else if (viewType == TYPE_HEADER) {
-            return new BaseHolder(headerView);
+            return new SpecialHolder(headerView);
         } else {
-            final RecyclerView.ViewHolder viewHolder = onCreateView(parent, viewType);
+            final BaseHolder viewHolder = onCreateView(parent, viewType);
             if (onItemClickListener != null) {
                 viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -267,18 +267,19 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<RecyclerView.View
     }
 
     @Override
-    public final void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        if (!(holder instanceof BaseHolder)) {
+    public final void onBindViewHolder(BaseHolder holder, int position) {
+        int viewType = getItemViewType(position);
+        if (viewType != TYPE_LOAD_MORE && viewType != TYPE_FOOTER && viewType != TYPE_HEADER) {
             position = holder.getAdapterPosition();
             if (headerView != null) {
                 position = position - 1;
             }
-            onBindView(holder, position);
+            onBindView((T) holder, position);
         }
     }
 
     @Override
-    public void onViewAttachedToWindow(RecyclerView.ViewHolder holder) {
+    public void onViewAttachedToWindow(BaseHolder holder) {
         super.onViewAttachedToWindow(holder);
         if (isStaggeredGridLayout(holder)) {
             handleLayoutIfStaggeredGridLayout(holder);
@@ -287,13 +288,10 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     private boolean isStaggeredGridLayout(RecyclerView.ViewHolder holder) {
         ViewGroup.LayoutParams layoutParams = holder.itemView.getLayoutParams();
-        if (layoutParams != null && layoutParams instanceof StaggeredGridLayoutManager.LayoutParams) {
-            return true;
-        }
-        return false;
+        return layoutParams != null && layoutParams instanceof StaggeredGridLayoutManager.LayoutParams;
     }
 
-    protected void handleLayoutIfStaggeredGridLayout(RecyclerView.ViewHolder holder) {
+    private void handleLayoutIfStaggeredGridLayout(RecyclerView.ViewHolder holder) {
         int viewType = holder.getItemViewType();
         if (viewType == TYPE_LOAD_MORE || viewType == TYPE_HEADER || viewType == TYPE_FOOTER) {
             StaggeredGridLayoutManager.LayoutParams p = (StaggeredGridLayoutManager.LayoutParams) holder.itemView.getLayoutParams();
@@ -392,14 +390,6 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<RecyclerView.View
             }
         }
         return max;
-    }
-
-    private class BaseHolder extends RecyclerView.ViewHolder {
-
-        public BaseHolder(View itemView) {
-            super(itemView);
-        }
-
     }
 
     public interface OnItemClickListener {

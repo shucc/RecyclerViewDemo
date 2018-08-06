@@ -14,6 +14,7 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:textColor">@color/general_white</item>
         <item name="android:layout_marginTop">8dp</item>
+        <item name="android:textAllCaps">false</item>
     </style>
 
 </resources>

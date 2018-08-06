@@ -1,6 +1,5 @@
 package cchao.org.recyclerapplication.ui.adapter;
 
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,12 +8,14 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import cchao.org.baseadapterlibrary.BaseAdapter;
+import cchao.org.baseadapterlibrary.BaseHolder;
 import cchao.org.recyclerapplication.R;
 
 /**
  * Created by chenchao on 16/2/3.
  */
-public class StaggeredGridAdapter extends BaseAdapter {
+public class StaggeredGridAdapter extends BaseAdapter<StaggeredGridAdapter.NormalViewHolder> {
 
     //瀑布流的高度
     private List<Integer> heights;
@@ -37,17 +38,17 @@ public class StaggeredGridAdapter extends BaseAdapter {
     }
 
     @Override
-    public RecyclerView.ViewHolder onCreateView(ViewGroup parent, int viewType) {
+    public BaseHolder onCreateView(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_default, parent, false);
         return new NormalViewHolder(view);
     }
 
     @Override
-    public void onBindView(final RecyclerView.ViewHolder holder, int position) {
-        ViewGroup.LayoutParams lp = ((NormalViewHolder) holder).mTextView.getLayoutParams();
+    public void onBindView(NormalViewHolder holder, int position) {
+        ViewGroup.LayoutParams lp =  holder.mTextView.getLayoutParams();
         lp.height = heights.get(position);
-        ((NormalViewHolder) holder).mTextView.setLayoutParams(lp);
-        ((NormalViewHolder)holder).mTextView.setText(data.get(position));
+        holder.mTextView.setLayoutParams(lp);
+        holder.mTextView.setText(data.get(position));
     }
 
     /**
@@ -74,13 +75,13 @@ public class StaggeredGridAdapter extends BaseAdapter {
         }
     }
 
-    private class NormalViewHolder extends RecyclerView.ViewHolder{
+    protected class NormalViewHolder extends BaseHolder {
 
         public TextView mTextView;
 
         public NormalViewHolder(View itemView) {
             super(itemView);
-            mTextView = (TextView) itemView.findViewById(R.id.recyclerview_text);
+            mTextView = itemView.findViewById(R.id.recyclerview_text);
         }
     }
 }
