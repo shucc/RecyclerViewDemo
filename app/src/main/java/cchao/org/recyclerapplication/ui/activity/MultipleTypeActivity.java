@@ -25,6 +25,7 @@ import in.srain.cube.views.ptr.PtrHandler;
  * cc@cchao.org
  */
 public class MultipleTypeActivity extends AppCompatActivity {
+
     private int pageNum = 1;
 
     private MyPtrClassicFrameLayout ptrLayout;
@@ -48,12 +49,12 @@ public class MultipleTypeActivity extends AppCompatActivity {
     }
 
     private void bindView() {
-        recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
-        ptrLayout = (MyPtrClassicFrameLayout) findViewById(R.id.ptrclassicframe);
+        recyclerView = findViewById(R.id.recyclerview);
+        ptrLayout = findViewById(R.id.ptrclassicframe);
     }
 
     private void initData() {
-        data = new ArrayList<String>();
+        data = new ArrayList<>();
         showData();
         View headView = getLayoutInflater().inflate(R.layout.header_view, null);
         adapter.addHeaderView(headView);
@@ -90,9 +91,6 @@ public class MultipleTypeActivity extends AppCompatActivity {
     }
 
     private void getData() {
-        if (pageNum == 1) {
-            data.clear();
-        }
         //全部加载完成
         if (pageNum == 4) {
             adapter.setLoadAll(true);
@@ -102,6 +100,9 @@ public class MultipleTypeActivity extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
+                if (pageNum == 1) {
+                    data.clear();
+                }
                 int size = 0;
                 if (data != null) {
                     size = data.size();

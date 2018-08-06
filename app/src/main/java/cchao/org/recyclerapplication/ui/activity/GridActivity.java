@@ -43,12 +43,12 @@ public class GridActivity extends Activity {
     }
 
     private void bindView() {
-        recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
-        ptrLayout = (MyPtrClassicFrameLayout) findViewById(R.id.ptrclassicframe);
+        recyclerView = findViewById(R.id.recyclerview);
+        ptrLayout = findViewById(R.id.ptrclassicframe);
     }
 
     private void initData() {
-        data = new ArrayList<String>();
+        data = new ArrayList<>();
         showData();
     }
 
@@ -80,12 +80,12 @@ public class GridActivity extends Activity {
     }
 
     private void getData() {
-        if (pageNum == 1) {
-            data.clear();
-        }
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
+                if (pageNum == 1) {
+                    data.clear();
+                }
                 int size = 0;
                 if (data != null) {
                     size = data.size();

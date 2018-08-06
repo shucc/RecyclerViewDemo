@@ -48,8 +48,8 @@ public class LinearActivity extends Activity {
     }
 
     private void bindView() {
-        recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
-        ptrLayout = (MyPtrClassicFrameLayout) findViewById(R.id.ptrclassicframe);
+        recyclerView =  findViewById(R.id.recyclerview);
+        ptrLayout =  findViewById(R.id.ptrclassicframe);
     }
 
     private void initData() {
@@ -90,9 +90,6 @@ public class LinearActivity extends Activity {
     }
 
     private void getData() {
-        if (pageNum == 1) {
-            data.clear();
-        }
         //全部加载完成
         if (pageNum == 4) {
             adapter.setLoadAll(true);
@@ -102,6 +99,9 @@ public class LinearActivity extends Activity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
+                if (pageNum == 1) {
+                    data.clear();
+                }
                 int size = 0;
                 if (data != null) {
                     size = data.size();
@@ -116,7 +116,6 @@ public class LinearActivity extends Activity {
 
     private void showData() {
         if (adapter == null) {
-
             linearManager = new LinearLayoutManager(LinearActivity.this);
             linearManager.setOrientation(LinearLayoutManager.VERTICAL);
             recyclerView.setLayoutManager(linearManager);

@@ -51,26 +51,25 @@ public class CoordinatorActivity extends AppCompatActivity {
     }
 
     private void setupToolbar() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.activity_coordinator_toolbar);
+        Toolbar toolbar = findViewById(R.id.activity_coordinator_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("CoorDinatorActivity");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     private void setupCollapsingToolbar() {
-        CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout) findViewById(
-                R.id.activity_coordinator_collapsing);
+        CollapsingToolbarLayout collapsingToolbar = findViewById(R.id.activity_coordinator_collapsing);
         collapsingToolbar.setTitleEnabled(false);
     }
 
     private void bindView() {
-        appBar = (AppBarLayout) findViewById(R.id.activity_coordinator_appbar);
-        recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
-        ptrLayout = (MyPtrClassicFrameLayout) findViewById(R.id.ptrclassicframe);
+        appBar = findViewById(R.id.activity_coordinator_appbar);
+        recyclerView = findViewById(R.id.recyclerview);
+        ptrLayout = findViewById(R.id.ptrclassicframe);
     }
 
     private void initData() {
-        data = new ArrayList<String>();
+        data = new ArrayList<>();
         showData();
     }
 
@@ -108,12 +107,12 @@ public class CoordinatorActivity extends AppCompatActivity {
     }
 
     private void getData() {
-        if (pageNum == 1) {
-            data.clear();
-        }
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
+                if (pageNum == 1) {
+                    data.clear();
+                }
                 int size = 0;
                 if (data != null) {
                     size = data.size();

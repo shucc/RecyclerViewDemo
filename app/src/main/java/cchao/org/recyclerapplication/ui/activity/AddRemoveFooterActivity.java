@@ -45,9 +45,9 @@ public class AddRemoveFooterActivity extends AppCompatActivity {
     }
 
     private void bindView() {
-        recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
-        addBtn = (Button) findViewById(R.id.add_footView);
-        removeBtn = (Button) findViewById(R.id.remove_footView);
+        recyclerView =  findViewById(R.id.recyclerview);
+        addBtn = findViewById(R.id.add_footView);
+        removeBtn = findViewById(R.id.remove_footView);
     }
 
     private void initData() {

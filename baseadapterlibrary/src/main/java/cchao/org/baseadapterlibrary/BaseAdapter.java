@@ -182,7 +182,7 @@ public abstract class BaseAdapter<T extends BaseHolder> extends RecyclerView.Ada
         if (loading && loadView != null) {
             count++;
         }
-        if (footerView != null) {
+        if (isLoadAll && footerView != null) {
             count++;
         }
         if (headerView != null) {

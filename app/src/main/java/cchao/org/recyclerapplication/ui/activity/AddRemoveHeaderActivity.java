@@ -45,9 +45,9 @@ public class AddRemoveHeaderActivity extends AppCompatActivity {
     }
 
     private void bindView() {
-        recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
-        addBtn = (Button) findViewById(R.id.add_headView);
-        removeBtn = (Button) findViewById(R.id.remove_headView);
+        recyclerView = findViewById(R.id.recyclerview);
+        addBtn = findViewById(R.id.add_headView);
+        removeBtn = findViewById(R.id.remove_headView);
     }
 
     private void initData() {

@@ -44,8 +44,8 @@ public class AutoScrollActivity extends Activity {
     }
 
     private void bindView() {
-        recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
-        nestedScrollView = (CustomScrollView) findViewById(R.id.scrollView);
+        recyclerView = findViewById(R.id.recyclerview);
+        nestedScrollView = findViewById(R.id.scrollView);
     }
 
     private void initData() {
@@ -68,9 +68,6 @@ public class AutoScrollActivity extends Activity {
     }
 
     private void getData() {
-        if (pageNum == 1) {
-            data.clear();
-        }
         //全部加载完成
         if (pageNum == 4) {
             adapter.setLoadAll(true);
@@ -79,6 +76,9 @@ public class AutoScrollActivity extends Activity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
+                if (pageNum == 1) {
+                    data.clear();
+                }
                 int size = 0;
                 if (data != null) {
                     size = data.size();
